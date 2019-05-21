@@ -4,7 +4,7 @@ CXX = g++
 CXXFLAGS = -std=c++14
 
 FUENTE = main.cpp
-NOMBRE = tarea
+NOMBRE = tarea.out
 XLSX = ArchivosXLSX/Cursos.xlsx ArchivosXLSX/Docentes.xlsx ArchivosXLSX/Salas.xlsx
 
 LIB = -Ixlnt/include -lxlnt

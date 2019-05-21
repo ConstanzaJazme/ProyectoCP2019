@@ -180,7 +180,7 @@ void imprimirVectorDocentes(char *argv[]){
 
 int main(int argc, char *argv[])
 {
-        cantidadFilasPorArchivo(argc, argv);
+        cantidadFilasPorArchivo(argc, argv); 
         // imprimirVectorDocentes(argv);
         return 0;
 }
