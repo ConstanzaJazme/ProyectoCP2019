@@ -9,13 +9,14 @@ XLSX = ArchivosXLSX/Cursos.xlsx ArchivosXLSX/Docentes.xlsx ArchivosXLSX/Salas.xl
 
 LIB = -Ixlnt/include -lxlnt
 
-CLASES = Clases_Funciones/docente.cpp
+CLASES = Clases_Funciones/docente.cpp Clases_Funciones/curso.cpp
+FUNCIONES = Clases_Funciones/funciones.cpp
 
 #Reglas
 
 
-tarea: $(FUENTE) $(CLASES)
-	$(CXX) $(FUENTE) -o $(NOMBRE) $(CLASES) $(CXXFLAGS) $(LIB)
+tarea: $(FUENTE) $(CLASES) $(FUNCIONES)
+	$(CXX) $(FUENTE) -o $(NOMBRE) $(CLASES) $(FUNCIONES) $(CXXFLAGS) $(LIB)
 	clear
 	./$(NOMBRE) $(XLSX)
 

@@ -37,6 +37,10 @@ string Docente::getApellido()
 {
         return Apellidos;
 }
+string Docente::getID()
+{
+        return ID;
+}
 void Docente::imprimirDocente()
 {
         vector<string> Dias = {"Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado"};
