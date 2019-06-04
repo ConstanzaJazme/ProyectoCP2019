@@ -14,12 +14,13 @@ Docente::Docente()//constructor
         Nombres = "SN";
         Apellidos = "SA";
 }
-Docente::Docente(string id, string nombres, string apellidos, vector<vector<int> > disponibilidad)
+Docente::Docente(string id, string nombres, string apellidos, vector<vector<int> > disponibilidad, int pesoDisponibilidad)
 {
         ID = id;
         Nombres = nombres;
         Apellidos = apellidos;
         Disponibilidad = disponibilidad;
+        PesoDisponibilidad = pesoDisponibilidad;
 }
 void Docente::setNombre(string nombre)
 {
@@ -52,4 +53,5 @@ void Docente::imprimirDocente()
                 }
                 cout << endl;
         }
+        cout << "Peso Disp: " << PesoDisponibilidad << endl;
 }

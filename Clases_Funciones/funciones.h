@@ -3,6 +3,7 @@
 
 #include "docente.h"
 #include "curso.h"
+#include "sala.h"
 
 using namespace std;
 using namespace xlnt;
@@ -36,5 +37,8 @@ vector<Curso> obtenerVectorInfoCursos(char *argv[]);
 void imprimirVectorCursos(char *argv[]);
 
 Docente buscarDocenteByID(std::string, std::vector<Docente>);
+
+//Retorna vector de Sala con la info del xlsx
+vector<Sala> obtenerVectorInfoSalas(char *argv[]);
 
 #endif // FUNCIONES_H_INCLUDED

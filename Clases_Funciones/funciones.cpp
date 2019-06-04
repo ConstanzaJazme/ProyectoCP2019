@@ -134,6 +134,7 @@ vector<Docente> obtenerVectorInfoDocentes(char *argv[]){
                 string id = vectorDocentes.at(profesores).at(0);
                 string nombres = vectorDocentes.at(profesores).at(1);
                 string apellidos = vectorDocentes.at(profesores).at(2);
+                int pesoDisponibilidad = 0;
 
                 //iteracion por pestañas en el xlsx
                 for (int sheet = 0; sheet < xlsDocentes.sheet_count(); sheet++) {
@@ -151,6 +152,7 @@ vector<Docente> obtenerVectorInfoDocentes(char *argv[]){
                                                         dia.push_back(1);
                                                 } else {
                                                         dia.push_back(0);
+                                                        pesoDisponibilidad++;
                                                 }
                                         }
                                 }
@@ -158,7 +160,7 @@ vector<Docente> obtenerVectorInfoDocentes(char *argv[]){
                         disponibleDia.push_back(dia);
                 }
                 //despues de que se recopila todos los datos se crea un objecto de clase Docente
-                Docente nuevoProfesor(id, nombres, apellidos, disponibleDia);
+                Docente nuevoProfesor(id, nombres, apellidos, disponibleDia, pesoDisponibilidad);
                 //se guarda el objeto en vector que los contenga a todos
                 vectorInfoDocentes.push_back(nuevoProfesor);
         }
@@ -223,4 +225,27 @@ void imprimirVectorCursos(char *argv[]){
                 contador++;
         }
         cout << endl << endl << "Cantidad de Cursos: " << contador << endl;
+}
+
+vector<Sala> obtenerVectorInfoSalas(char *argv[]){
+        vector<Sala> vectorInfoSala; //Vector a devolver
+
+        workbook xlsxSala;
+        xlsxSala.load(argv[3]); //carga del xlsx
+
+        //obtencion de lista de las salas
+        vector< vector<string> > vectorSala = crearVectorVectoresIndex(xlsxSala, 0);
+
+        //iteracion por sala
+        for (int sala = 1; sala < vectorSala.size(); sala++)
+        {
+                string Edificio = vectorSala.at(sala).at(0);
+                string numeroSala = vectorSala.at(sala).at(1);
+                string nombreSala = Edificio + "-" + numeroSala;
+
+                Sala nuevoSala(nombreSala);
+                vectorInfoSala.push_back(nuevoSala);
+
+        }
+        return vectorInfoSala;
 }

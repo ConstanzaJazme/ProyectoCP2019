@@ -9,7 +9,7 @@ XLSX = ArchivosXLSX/Cursos.xlsx ArchivosXLSX/Docentes.xlsx ArchivosXLSX/Salas.xl
 
 LIB = -Ixlnt/include -lxlnt
 
-CLASES = Clases_Funciones/docente.cpp Clases_Funciones/curso.cpp
+CLASES = Clases_Funciones/docente.cpp Clases_Funciones/curso.cpp Clases_Funciones/sala.cpp
 FUNCIONES = Clases_Funciones/funciones.cpp
 
 #Reglas
@@ -25,3 +25,6 @@ ejecutar:
 
 clear:
 	rm $(NOMBRE)
+
+main2: main2.cpp
+	g++ main2.cpp -o prueba -std=c++14 -Ixlnt/include -lxlnt
