@@ -13,14 +13,14 @@ Docente::Docente()//constructor
         PesoDisponibilidad = 0;
         Holgura = 0;
 }
-Docente::Docente(string id, string nombres, string apellidos, vector<vector<int> > disponibilidad, int pesoDisponibilidad)
+Docente::Docente(string id, string nombres, string apellidos, vector<vector<int> > disponibilidad, int pesoDisponibilidad, int holgura)
 {
         ID = id;
         Nombres = nombres;
         Apellidos = apellidos;
         Disponibilidad = disponibilidad;
         PesoDisponibilidad = pesoDisponibilidad;
-        Holgura = 0;
+        Holgura = holgura;
 }
 void Docente::setNombre(string nombre)
 {
@@ -53,7 +53,6 @@ void Docente::imprimirDocente()
                 }
                 cout << endl;
         }
-        cout << "Holgura" << 39-PesoDisponibilidad << endl;
 
 }
 int Docente::getPesoDisponibilidad()

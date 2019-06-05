@@ -4,7 +4,7 @@
 class Docente {
 public:
 Docente();
-Docente(std::string, std::string, std::string, std::vector<std::vector<int> >, int);
+Docente(std::string, std::string, std::string, std::vector<std::vector<int> >, int, int);
 void setNombre(std::string);
 void setApellido(std::string);
 std::string getNombre();

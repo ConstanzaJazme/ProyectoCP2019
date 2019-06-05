@@ -37,12 +37,24 @@ vector<Curso> obtenerVectorInfoCursos(char *argv[]);
 //Imprime vector de Docentes
 void imprimirVectorCursos(char *argv[]);
 
+//Retorna la busqueda de un Docente por su ID desde un vector<Docente>
 Docente buscarDocenteByID(std::string, std::vector<Docente>);
 
 //Retorna vector de Sala con la info del xlsx
 vector<Sala> obtenerVectorInfoSalas(char *argv[]);
 
-int obtenerBloquesPorDocente(std::string, std::vector<Curso>);
+//Retorna el numero de bloques totales asignados a un profesor desde vector Curso
+int obtenerBloquesPorDocenteByCurso(std::string, std::vector<Curso>);
+
+//Ordena ascendentemente el vector de docentes segun su holgura
+void quickSort(std::vector<Docente> &, int, int);
+
+//Funcion que recibe los vectores docente y curso y ordena el de docentes segun holgura y lo imprime
+void ordenarPorHolguraVectorDocente(std::vector<Docente>,std::vector<Curso>);
+
+//Crea el archivo .xlsx de salida y coloca el nombre de cada pestaña segun las salas disponibles en Salas.xlsx
+void crearArchivoSalidaConNombreSheet(std::vector<Sala>);
+
 
 
 #endif // FUNCIONES_H_INCLUDED

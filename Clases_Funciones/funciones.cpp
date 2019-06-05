@@ -158,7 +158,7 @@ vector<Docente> obtenerVectorInfoDocentes(char *argv[]){
                         disponibleDia.push_back(dia);
                 }
                 //despues de que se recopila todos los datos se crea un objecto de clase Docente
-                Docente nuevoProfesor(id, nombres, apellidos, disponibleDia, pesoDisponibilidad);
+                Docente nuevoProfesor(id, nombres, apellidos, disponibleDia, pesoDisponibilidad, 0);
                 //se guarda el objeto en vector que los contenga a todos
                 vectorInfoDocentes.push_back(nuevoProfesor);
         }
@@ -204,20 +204,20 @@ vector<Curso> obtenerVectorInfoCursos(char *argv[]){
 }
 
 Docente buscarDocenteByID(string id, vector<Docente> vector){
-        for(Docente profesor : vector) {
-                if(profesor.getID() == id) {
-                        return profesor;
+        for(Docente profesor : vector) { //itera por los docentes en el vector
+                if(profesor.getID() == id) { //comprueba los ID
+                        return profesor; //si lo encuentra, lo retorna
                 }
         }
-        Docente nuevo;
+        Docente nuevo; //Objeto vacio para retornar
         return nuevo;
 }
 
-int obtenerBloquesPorDocente(string id, vector<Curso> vector){
+int obtenerBloquesPorDocenteByCurso(string id, vector<Curso> vector){
         int holgura = 0;
-        for(int curso = 0; curso < vector.size(); curso++) {
-                if(vector.at(curso).getID_Docente() == id) {
-                        holgura += stoi(vector.at(curso).getBloques());
+        for(Curso c : vector) { //itera el vector
+                if(c.getID_Docente() == id) { //verifica si tienen el mismo ID
+                        holgura += stoi(c.getBloques()); //si son iguales, suma su holgura
                 }
         }
         return holgura;
@@ -256,4 +256,98 @@ vector<Sala> obtenerVectorInfoSalas(char *argv[]){
 
         }
         return vectorInfoSala;
+}
+void quickSort(vector<Docente> &numeros, int limite_izq, int limite_der){
+        int pivote = numeros.at((limite_izq + limite_der)/2).getHolgura();
+        int i = limite_izq;
+        int j = limite_der;
+        Docente aux;
+
+
+        while(i<=j) {
+                while(numeros.at(i).getHolgura() < pivote)
+                        i++;
+                while(numeros.at(j).getHolgura() > pivote)
+                        j--;
+
+                if(i <= j) {
+
+                        aux = numeros.at(i);
+                        numeros.at(i) = numeros.at(j);
+                        numeros.at(j) = aux;
+                        i++;
+                        j--;
+                }
+        }
+
+        if(limite_izq < j) {
+                quickSort(numeros, limite_izq, j);
+        }
+
+        if(i < limite_der) {
+                quickSort(numeros, i, limite_der);
+        }
+}
+
+void ordenarPorHolguraVectorDocente(vector<Docente> vectorDocente, vector<Curso> vectorCurso){
+        for(int i = 0; i < vectorDocente.size(); i++) { //itera vector docente
+                //calcula disponibilidad restando 39 (7 bloques * 5 diasSemana + 4 bloques dia sabado)
+                //menos lo obtenido en el objeto docente ya calculado
+                int disponibilidadReal = 39-vectorDocente.at(i).getPesoDisponibilidad(); //39: disponibilidad todos los bloques en una semana
+
+                //Se busca lo que realmente se necesita en bloques para cada profesor
+                int disponibilidadEsperada = obtenerBloquesPorDocenteByCurso(vectorDocente.at(i).getID(), vectorCurso);
+
+
+                int holgura = disponibilidadReal - disponibilidadEsperada;
+                vectorDocente.at(i).setHolgura(holgura);//Se cambia atributo Holgura en cada objeto por lo obtenido
+        }
+        quickSort(vectorDocente, 0, vectorDocente.size()-1); //se ordena ascendentemente por holgura
+
+        for(Docente profe : vectorDocente) { //Muestra por pantalla
+                cout << profe.getNombre() << " " << profe.getApellido() << " /Holgura: " << profe.getHolgura() << endl;
+        }
+}
+
+void crearArchivoSalidaConNombreSheet(vector<Sala> vectorSala){
+        //creacion de archivo Start
+        xlnt::workbook wbOut;
+        string dest_filename = "salida.xlsx";
+
+        for(int i = 0; i < 17; i++) { //17 primeras sheets
+                wbOut.create_sheet();
+        }
+        wbOut.save(dest_filename);
+
+        //se abre nuevamente ya que da un error y se crean las siguiente 13 sheets
+        xlnt::workbook resultado;
+        resultado.load(dest_filename);
+        for(int i = 0; i < 13; i++) {
+                resultado.create_sheet();
+        }
+        resultado.save(dest_filename);
+
+        //se crean las ultimas 10 sheets antes que lanze el error de core.
+        xlnt::workbook resultado2;
+        resultado2.load(dest_filename);
+        for(int i = 0; i < 10; i++) {
+                resultado2.create_sheet();
+        }
+        resultado2.save(dest_filename);
+
+        //Terminar creacion de archivo END
+
+        //Colocar nombres pestañas
+        xlnt::workbook salida;
+        salida.load(dest_filename);
+
+        for(int sala = 0; sala < vectorSala.size(); sala++) {
+                xlnt::worksheet hojaActiva = salida.sheet_by_index(sala);
+                string nombreSala = vectorSala.at(sala).getNombre();
+                hojaActiva.title(nombreSala);
+        }
+
+
+        salida.save(dest_filename);
+
 }

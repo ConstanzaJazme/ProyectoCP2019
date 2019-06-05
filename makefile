@@ -25,6 +25,3 @@ ejecutar:
 
 clear:
 	rm $(NOMBRE)
-
-main2: main2.cpp
-	g++ main2.cpp -o prueba -std=c++14 -Ixlnt/include -lxlnt
