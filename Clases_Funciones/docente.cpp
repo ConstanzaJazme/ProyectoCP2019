@@ -1,10 +1,7 @@
 #include <iostream>
 #include <vector>
 #include "docente.h"
-
-//Definir dias para poder imprimir despues cada Docente
-
-//jajaja no me sirve
+#include "funciones.h"
 
 using namespace std;
 
@@ -13,6 +10,8 @@ Docente::Docente()//constructor
         ID = "0";
         Nombres = "SN";
         Apellidos = "SA";
+        PesoDisponibilidad = 0;
+        Holgura = 0;
 }
 Docente::Docente(string id, string nombres, string apellidos, vector<vector<int> > disponibilidad, int pesoDisponibilidad)
 {
@@ -21,6 +20,7 @@ Docente::Docente(string id, string nombres, string apellidos, vector<vector<int>
         Apellidos = apellidos;
         Disponibilidad = disponibilidad;
         PesoDisponibilidad = pesoDisponibilidad;
+        Holgura = 0;
 }
 void Docente::setNombre(string nombre)
 {
@@ -53,5 +53,18 @@ void Docente::imprimirDocente()
                 }
                 cout << endl;
         }
-        cout << "Peso Disp: " << PesoDisponibilidad << endl;
+        cout << "Holgura" << 39-PesoDisponibilidad << endl;
+
+}
+int Docente::getPesoDisponibilidad()
+{
+        return PesoDisponibilidad;
+}
+void Docente::setHolgura(int holgura)
+{
+        Holgura = holgura;
+}
+int Docente::getHolgura()
+{
+        return Holgura;
 }

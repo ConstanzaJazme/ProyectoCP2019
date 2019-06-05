@@ -7,7 +7,7 @@ using namespace std;
 
 int main()
 {
-
+        //creacion de archivo Start
         xlnt::workbook wbOut;
         string dest_filename = "salida.xlsx";
         for(int i = 0; i < 17; i++) {
@@ -30,6 +30,16 @@ int main()
                 resultado2.create_sheet();
         }
         resultado2.save(dest_filename);
+
+        //Terminar creacion de archivo END
+        //Colocar nombres pestañas
+        xlnt::workbook salida;
+        salida.load(dest_filename);
+
+        xlnt::worksheet hojaActiva = salida.sheet_by_index(0);
+        hojaActiva.title("M1-301");
+
+        salida.save(dest_filename);
 
         return 0;
 }

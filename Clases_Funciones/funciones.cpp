@@ -5,7 +5,6 @@
 #include "funciones.h"
 
 using namespace std;
-using namespace xlnt;
 
 //Cuenta la cantidad de filas que hay los archivos mandados por argumento.
 void cantidadFilasPorArchivo(int argc, char *argv[]){
@@ -15,7 +14,7 @@ void cantidadFilasPorArchivo(int argc, char *argv[]){
                 for(int archivos = 1; archivos < argc; archivos++) {
                         cout << "Nombre archivo: " << argv[archivos] << endl;
 
-                        workbook xlsCursos; //instancia de objeto que aloja el xlsx
+                        xlnt::workbook xlsCursos; //instancia de objeto que aloja el xlsx
                         xlsCursos.load(argv[archivos]); //carga del xlsx
                         auto sheetCursos = xlsCursos.active_sheet(); //trabajando con la 1° pestaña del archivo
 
@@ -62,8 +61,8 @@ void imprimeProfesores(vector<vector<string> > profes){
 }
 
 //Crea vector que contiene la info de cierta pestaña del xlsx
-vector<vector<string> > crearVectorVectoresIndex(workbook wb, int index){
-        worksheet hojaActiva = wb.sheet_by_index(index);
+vector<vector<string> > crearVectorVectoresIndex(xlnt::workbook wb, int index){
+        xlnt::worksheet hojaActiva = wb.sheet_by_index(index);
 
         vector<vector<string> > vectorHojaCompleta;
 
@@ -80,11 +79,11 @@ vector<vector<string> > crearVectorVectoresIndex(workbook wb, int index){
 
 //Cuenta la cantidad de asignarutas de cada profesor y las muestra por pantalla
 void cantidadAsignaturasPorProfesor(int argc, char *argv[]){
-        workbook xlsCursos; //instancia de objeto que aloja el xlsx
+        xlnt::workbook xlsCursos; //instancia de objeto que aloja el xlsx
         xlsCursos.load(argv[1]); //carga del xlsx
         auto sheetCursos = xlsCursos.active_sheet(); //seleccionar 1° pestaña
 
-        workbook xlsDocentes; //instancia de objeto que aloja el xlsx
+        xlnt::workbook xlsDocentes; //instancia de objeto que aloja el xlsx
         xlsDocentes.load(argv[2]); //carga xlsx
         auto sheetDocentes = xlsDocentes.active_sheet(); //seleccionar 1° pestaña
 
@@ -120,7 +119,7 @@ void cantidadAsignaturasPorProfesor(int argc, char *argv[]){
 vector<Docente> obtenerVectorInfoDocentes(char *argv[]){
         vector<Docente> vectorInfoDocentes; //Vector a devolver
 
-        workbook xlsDocentes;
+        xlnt::workbook xlsDocentes;
         xlsDocentes.load(argv[2]); //carga del xlsx
 
         //obtencion de lista de los docentes
@@ -129,7 +128,6 @@ vector<Docente> obtenerVectorInfoDocentes(char *argv[]){
         //iteracion por docentes
         for (int profesores = 1; profesores < vectorDocentes.size(); profesores++)
         {
-                cout << "..";
                 vector<vector<int> > disponibleDia;
                 string id = vectorDocentes.at(profesores).at(0);
                 string nombres = vectorDocentes.at(profesores).at(1);
@@ -183,7 +181,7 @@ void imprimirVectorDocentes(char *argv[]){
 vector<Curso> obtenerVectorInfoCursos(char *argv[]){
         vector<Curso> vectorInfoCurso; //Vector a devolver
 
-        workbook xlsCurso;
+        xlnt::workbook xlsCurso;
         xlsCurso.load(argv[1]); //carga del xlsx
 
         //obtencion de lista de los docentes
@@ -215,6 +213,16 @@ Docente buscarDocenteByID(string id, vector<Docente> vector){
         return nuevo;
 }
 
+int obtenerBloquesPorDocente(string id, vector<Curso> vector){
+        int holgura = 0;
+        for(int curso = 0; curso < vector.size(); curso++) {
+                if(vector.at(curso).getID_Docente() == id) {
+                        holgura += stoi(vector.at(curso).getBloques());
+                }
+        }
+        return holgura;
+}
+
 //Imprime vector de Docentes
 void imprimirVectorCursos(char *argv[]){
         vector<Curso> allCursos = obtenerVectorInfoCursos(argv);
@@ -230,7 +238,7 @@ void imprimirVectorCursos(char *argv[]){
 vector<Sala> obtenerVectorInfoSalas(char *argv[]){
         vector<Sala> vectorInfoSala; //Vector a devolver
 
-        workbook xlsxSala;
+        xlnt::workbook xlsxSala;
         xlsxSala.load(argv[3]); //carga del xlsx
 
         //obtencion de lista de las salas

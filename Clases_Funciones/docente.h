@@ -10,7 +10,10 @@ void setApellido(std::string);
 std::string getNombre();
 std::string getID();
 std::string getApellido();
+int getPesoDisponibilidad();
 void imprimirDocente();
+void setHolgura(int);
+int getHolgura();
 
 
 private:
@@ -19,6 +22,7 @@ std::string Nombres;
 std::string Apellidos;
 std::vector<std::vector<int> > Disponibilidad;
 int PesoDisponibilidad;
+int Holgura;
 };
 
 #endif

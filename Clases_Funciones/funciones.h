@@ -4,9 +4,10 @@
 #include "docente.h"
 #include "curso.h"
 #include "sala.h"
+#include <xlnt/xlnt.hpp>
+
 
 using namespace std;
-using namespace xlnt;
 
 //Cuenta la cantidad de filas que hay los archivos mandados por argumento.
 void cantidadFilasPorArchivo(int argc, char *argv[]);
@@ -19,7 +20,7 @@ void imprimirVectorNPrimeros(vector<vector<string>> vector, int nPrimeros);
 void imprimeProfesores(vector<vector<string>> profes);
 
 //Crea vector que contiene la info de cierta pestaña del xlsx
-vector<vector<string>> crearVectorVectoresIndex(workbook wb, int index);
+vector<vector<string>> crearVectorVectoresIndex(xlnt::workbook wb, int index);
 
 //Cuenta la cantidad de asignarutas de cada profesor y las muestra por pantalla
 void cantidadAsignaturasPorProfesor(int argc, char *argv[]);
@@ -40,5 +41,8 @@ Docente buscarDocenteByID(std::string, std::vector<Docente>);
 
 //Retorna vector de Sala con la info del xlsx
 vector<Sala> obtenerVectorInfoSalas(char *argv[]);
+
+int obtenerBloquesPorDocente(std::string, std::vector<Curso>);
+
 
 #endif // FUNCIONES_H_INCLUDED
