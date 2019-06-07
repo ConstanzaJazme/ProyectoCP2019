@@ -12,7 +12,6 @@ using namespace xlnt;
 
 int main(int argc, char *argv[])
 {
-
         vector<Docente> vectorDocente = obtenerVectorInfoDocentes(argv);
         vector<Curso> vectorCurso = obtenerVectorInfoCursos(argv);
         vector<Sala> vectorSala = obtenerVectorInfoSalas(argv);
@@ -21,12 +20,16 @@ int main(int argc, char *argv[])
 
         crearArchivoSalidaConNombreSheet(vectorSala);
 
+        cantidadFilasPorArchivo(argc, argv);
+
+        cantidadAsignaturasPorProfesor(argc, argv);
+
 
         return 0;
 }
 
 
-//Datos de prueba rapida vectorDocente:
+//================== Datos de prueba rapida vectorDocente ======================
 
 // vector<Docente> vectorDocente;
 // vector<vector<int> > vectorVacio;

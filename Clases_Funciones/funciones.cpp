@@ -6,6 +6,9 @@
 
 using namespace std;
 
+
+//================================== FUNCIONES GENERALES =====================================
+
 //Cuenta la cantidad de filas que hay los archivos mandados por argumento.
 void cantidadFilasPorArchivo(int argc, char *argv[]){
         if(argc > 1) { //Verifica la cantidad de argumentos a momento de ejecutar
@@ -46,20 +49,6 @@ void imprimirVectorNPrimeros(vector<vector<string> > vector, int nPrimeros){
         }
 }
 
-//Muestra por pantalla una lista de los profesores desde un vector
-void imprimeProfesores(vector<vector<string> > profes){
-        for (int fila = 1; fila < profes.size(); fila++) //Itera por fila
-        {
-                cout << fila << ".- ";
-                for (int columna = 0; columna < 3; columna++) //itera por columna
-                {
-                        //Imprime lo que esta en la fila y columna indicada
-                        cout << profes.at(fila).at(columna) << " ";
-                }
-                cout << endl;
-        }
-}
-
 //Crea vector que contiene la info de cierta pestaña del xlsx
 vector<vector<string> > crearVectorVectoresIndex(xlnt::workbook wb, int index){
         xlnt::worksheet hojaActiva = wb.sheet_by_index(index);
@@ -75,6 +64,55 @@ vector<vector<string> > crearVectorVectoresIndex(xlnt::workbook wb, int index){
         }
 
         return vectorHojaCompleta;
+}
+
+//Ordena ascendentemente el vector de docentes segun su holgura
+void quickSort(vector<Docente> &numeros, int limite_izq, int limite_der){
+        int pivote = numeros.at((limite_izq + limite_der)/2).getHolgura();
+        int i = limite_izq;
+        int j = limite_der;
+        Docente aux;
+
+
+        while(i<=j) {
+                while(numeros.at(i).getHolgura() < pivote)
+                        i++;
+                while(numeros.at(j).getHolgura() > pivote)
+                        j--;
+
+                if(i <= j) {
+
+                        aux = numeros.at(i);
+                        numeros.at(i) = numeros.at(j);
+                        numeros.at(j) = aux;
+                        i++;
+                        j--;
+                }
+        }
+
+        if(limite_izq < j) {
+                quickSort(numeros, limite_izq, j);
+        }
+
+        if(i < limite_der) {
+                quickSort(numeros, i, limite_der);
+        }
+}
+
+//================================== FUNCIONES DOCENTES =====================================
+
+//Muestra por pantalla una lista de los profesores desde un vector
+void imprimeProfesores(vector<vector<string> > profes){
+        for (int fila = 1; fila < profes.size(); fila++) //Itera por fila
+        {
+                cout << fila << ".- ";
+                for (int columna = 0; columna < 3; columna++) //itera por columna
+                {
+                        //Imprime lo que esta en la fila y columna indicada
+                        cout << profes.at(fila).at(columna) << " ";
+                }
+                cout << endl;
+        }
 }
 
 //Cuenta la cantidad de asignarutas de cada profesor y las muestra por pantalla
@@ -178,6 +216,41 @@ void imprimirVectorDocentes(char *argv[]){
         cout << endl << endl << "Cantidad de profesores: " << contador << endl;
 }
 
+//Funcion que recibe los vectores docente y curso y ordena el de docentes segun holgura y lo imprime
+void ordenarPorHolguraVectorDocente(vector<Docente> vectorDocente, vector<Curso> vectorCurso){
+        for(int i = 0; i < vectorDocente.size(); i++) { //itera vector docente
+                //calcula disponibilidad restando 39 (7 bloques * 5 diasSemana + 4 bloques dia sabado)
+                //menos lo obtenido en el objeto docente ya calculado
+                int disponibilidadReal = 39-vectorDocente.at(i).getPesoDisponibilidad(); //39: disponibilidad todos los bloques en una semana
+
+                //Se busca lo que realmente se necesita en bloques para cada profesor
+                int disponibilidadEsperada = obtenerBloquesPorDocenteByCurso(vectorDocente.at(i).getID(), vectorCurso);
+
+
+                int holgura = disponibilidadReal - disponibilidadEsperada;
+                vectorDocente.at(i).setHolgura(holgura);//Se cambia atributo Holgura en cada objeto por lo obtenido
+        }
+        quickSort(vectorDocente, 0, vectorDocente.size()-1); //se ordena ascendentemente por holgura
+
+        for(Docente profe : vectorDocente) { //Muestra por pantalla
+                cout << profe.getNombre() << " " << profe.getApellido() << " /Holgura: " << profe.getHolgura() << endl;
+        }
+}
+
+//Retorna la busqueda de un Docente por su ID desde un vector<Docente>
+Docente buscarDocenteByID(string id, vector<Docente> vector){
+        for(Docente profesor : vector) { //itera por los docentes en el vector
+                if(profesor.getID() == id) { //comprueba los ID
+                        return profesor; //si lo encuentra, lo retorna
+                }
+        }
+        Docente nuevo; //Objeto vacio para retornar
+        return nuevo;
+}
+
+//================================== FUNCIONES CURSOS =====================================
+
+//Retorna vector de Curso con la info del xlsx
 vector<Curso> obtenerVectorInfoCursos(char *argv[]){
         vector<Curso> vectorInfoCurso; //Vector a devolver
 
@@ -203,26 +276,6 @@ vector<Curso> obtenerVectorInfoCursos(char *argv[]){
 
 }
 
-Docente buscarDocenteByID(string id, vector<Docente> vector){
-        for(Docente profesor : vector) { //itera por los docentes en el vector
-                if(profesor.getID() == id) { //comprueba los ID
-                        return profesor; //si lo encuentra, lo retorna
-                }
-        }
-        Docente nuevo; //Objeto vacio para retornar
-        return nuevo;
-}
-
-int obtenerBloquesPorDocenteByCurso(string id, vector<Curso> vector){
-        int holgura = 0;
-        for(Curso c : vector) { //itera el vector
-                if(c.getID_Docente() == id) { //verifica si tienen el mismo ID
-                        holgura += stoi(c.getBloques()); //si son iguales, suma su holgura
-                }
-        }
-        return holgura;
-}
-
 //Imprime vector de Docentes
 void imprimirVectorCursos(char *argv[]){
         vector<Curso> allCursos = obtenerVectorInfoCursos(argv);
@@ -235,6 +288,20 @@ void imprimirVectorCursos(char *argv[]){
         cout << endl << endl << "Cantidad de Cursos: " << contador << endl;
 }
 
+//Retorna el numero de bloques totales asignados a un profesor desde vector Curso
+int obtenerBloquesPorDocenteByCurso(string id, vector<Curso> vector){
+        int holgura = 0;
+        for(Curso c : vector) { //itera el vector
+                if(c.getID_Docente() == id) { //verifica si tienen el mismo ID
+                        holgura += stoi(c.getBloques()); //si son iguales, suma su holgura
+                }
+        }
+        return holgura;
+}
+
+//================================== FUNCIONES SALAS =====================================
+
+//Crea el archivo .xlsx de salida y coloca el nombre de cada pestaña segun las salas disponibles en Salas.xlsx
 vector<Sala> obtenerVectorInfoSalas(char *argv[]){
         vector<Sala> vectorInfoSala; //Vector a devolver
 
@@ -257,58 +324,8 @@ vector<Sala> obtenerVectorInfoSalas(char *argv[]){
         }
         return vectorInfoSala;
 }
-void quickSort(vector<Docente> &numeros, int limite_izq, int limite_der){
-        int pivote = numeros.at((limite_izq + limite_der)/2).getHolgura();
-        int i = limite_izq;
-        int j = limite_der;
-        Docente aux;
 
-
-        while(i<=j) {
-                while(numeros.at(i).getHolgura() < pivote)
-                        i++;
-                while(numeros.at(j).getHolgura() > pivote)
-                        j--;
-
-                if(i <= j) {
-
-                        aux = numeros.at(i);
-                        numeros.at(i) = numeros.at(j);
-                        numeros.at(j) = aux;
-                        i++;
-                        j--;
-                }
-        }
-
-        if(limite_izq < j) {
-                quickSort(numeros, limite_izq, j);
-        }
-
-        if(i < limite_der) {
-                quickSort(numeros, i, limite_der);
-        }
-}
-
-void ordenarPorHolguraVectorDocente(vector<Docente> vectorDocente, vector<Curso> vectorCurso){
-        for(int i = 0; i < vectorDocente.size(); i++) { //itera vector docente
-                //calcula disponibilidad restando 39 (7 bloques * 5 diasSemana + 4 bloques dia sabado)
-                //menos lo obtenido en el objeto docente ya calculado
-                int disponibilidadReal = 39-vectorDocente.at(i).getPesoDisponibilidad(); //39: disponibilidad todos los bloques en una semana
-
-                //Se busca lo que realmente se necesita en bloques para cada profesor
-                int disponibilidadEsperada = obtenerBloquesPorDocenteByCurso(vectorDocente.at(i).getID(), vectorCurso);
-
-
-                int holgura = disponibilidadReal - disponibilidadEsperada;
-                vectorDocente.at(i).setHolgura(holgura);//Se cambia atributo Holgura en cada objeto por lo obtenido
-        }
-        quickSort(vectorDocente, 0, vectorDocente.size()-1); //se ordena ascendentemente por holgura
-
-        for(Docente profe : vectorDocente) { //Muestra por pantalla
-                cout << profe.getNombre() << " " << profe.getApellido() << " /Holgura: " << profe.getHolgura() << endl;
-        }
-}
-
+//Retorna vector de Sala con la info del xlsx
 void crearArchivoSalidaConNombreSheet(vector<Sala> vectorSala){
         //creacion de archivo Start
         xlnt::workbook wbOut;

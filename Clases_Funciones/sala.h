@@ -7,8 +7,10 @@ public:
 
 Sala();
 Sala(std::string);
-std::string getNombre();
+
 void setNombre(std::string);
+
+std::string getNombre();
 
 
 private:

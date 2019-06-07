@@ -4,19 +4,24 @@
 
 using namespace std;
 
-Sala::Sala()//constructor
-{
-        Nombre = "";
+//================================== CONSTRUCTORES =====================================
+
+Sala::Sala(){
+        this->Nombre = "";
 }
-Sala::Sala(string nombre)
-{
-        Nombre = nombre;
+
+Sala::Sala(string nombre){
+        this->Nombre = nombre;
 }
-void Sala::setNombre(string nombre)
-{
-        Nombre = nombre;
+
+//================================== METODOS SETS =====================================
+
+void Sala::setNombre(string nombre){
+        this->Nombre = nombre;
 }
-string Sala::getNombre()
-{
-        return Nombre;
+
+//================================== METODOS GETS =====================================
+
+string Sala::getNombre(){
+        return this->Nombre;
 }

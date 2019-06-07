@@ -5,15 +5,20 @@ class Docente {
 public:
 Docente();
 Docente(std::string, std::string, std::string, std::vector<std::vector<int> >, int, int);
+
+void setID(std::string);
 void setNombre(std::string);
 void setApellido(std::string);
-std::string getNombre();
+void setPesoDisponibilidad(int);
+void setHolgura(int);
+
 std::string getID();
+std::string getNombre();
 std::string getApellido();
 int getPesoDisponibilidad();
-void imprimirDocente();
-void setHolgura(int);
 int getHolgura();
+
+void imprimirDocente();
 
 
 private:

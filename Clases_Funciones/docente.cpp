@@ -5,65 +5,83 @@
 
 using namespace std;
 
-Docente::Docente()//constructor
-{
-        ID = "0";
-        Nombres = "SN";
-        Apellidos = "SA";
-        PesoDisponibilidad = 0;
-        Holgura = 0;
+//================================== CONSTRUCTORES =====================================
+
+Docente::Docente(){
+        this->ID = "0";
+        this->Nombres = "SN";
+        this->Apellidos = "SA";
+        this->PesoDisponibilidad = 0;
+        this->Holgura = 0;
 }
-Docente::Docente(string id, string nombres, string apellidos, vector<vector<int> > disponibilidad, int pesoDisponibilidad, int holgura)
-{
-        ID = id;
-        Nombres = nombres;
-        Apellidos = apellidos;
-        Disponibilidad = disponibilidad;
-        PesoDisponibilidad = pesoDisponibilidad;
-        Holgura = holgura;
+
+Docente::Docente(string id, string nombres, string apellidos, vector<vector<int> > disponibilidad, int pesoDisponibilidad, int holgura){
+        this->ID = id;
+        this->Nombres = nombres;
+        this->Apellidos = apellidos;
+        this->Disponibilidad = disponibilidad;
+        this->PesoDisponibilidad = pesoDisponibilidad;
+        this->Holgura = holgura;
 }
-void Docente::setNombre(string nombre)
-{
-        Nombres = nombre;
+
+//================================== METODOS SETS =====================================
+
+void Docente::setID(string id){
+        this->ID = id;
 }
-void Docente::setApellido(string apellido)
-{
-        Apellidos = apellido;
+
+void Docente::setNombre(string nombre){
+        this->Nombres = nombre;
 }
-string Docente::getNombre()
-{
-        return Nombres;
+
+void Docente::setApellido(string apellido){
+        this->Apellidos = apellido;
 }
-string Docente::getApellido()
-{
-        return Apellidos;
+
+void Docente::setPesoDisponibilidad(int pesoDisponibilidad){
+        this->PesoDisponibilidad = pesoDisponibilidad;
 }
-string Docente::getID()
-{
-        return ID;
+
+void Docente::setHolgura(int holgura){
+        this->Holgura = holgura;
 }
-void Docente::imprimirDocente()
-{
+
+//================================== METODOS GETS =====================================
+
+string Docente::getID(){
+        return this->ID;
+}
+
+string Docente::getNombre(){
+        return this->Nombres;
+}
+
+string Docente::getApellido(){
+        return this->Apellidos;
+}
+
+int Docente::getPesoDisponibilidad(){
+        return this->PesoDisponibilidad;
+}
+
+int Docente::getHolgura(){
+        return this->Holgura;
+}
+
+
+//================================== METODOS GENERALES =====================================
+
+void Docente::imprimirDocente(){
         vector<string> Dias = {"Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado"};
-        cout << "Profesor: " << ID << " - " << Nombres << " " << Apellidos << endl;
-        for(int dia = 0; dia < Disponibilidad.size(); dia++) {
+
+        cout << "Profesor: " << this->ID << " - " << this->Nombres << " " << this->Apellidos << endl;
+
+        for(int dia = 0; dia < this->Disponibilidad.size(); dia++) {
                 cout << Dias[dia] << ": ";
-                for(int disp = 0; disp < Disponibilidad.at(dia).size(); disp++) {
-                        cout << Disponibilidad.at(dia).at(disp) << " ";
+                for(int disp = 0; disp < this->Disponibilidad.at(dia).size(); disp++) {
+                        cout << this->Disponibilidad.at(dia).at(disp) << " ";
                 }
                 cout << endl;
         }
 
-}
-int Docente::getPesoDisponibilidad()
-{
-        return PesoDisponibilidad;
-}
-void Docente::setHolgura(int holgura)
-{
-        Holgura = holgura;
-}
-int Docente::getHolgura()
-{
-        return Holgura;
 }

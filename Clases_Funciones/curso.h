@@ -7,14 +7,17 @@ class Curso {
 public:
 Curso();
 Curso(std::string, std::string, std::string, std::string);
-std::string getCodigo();
-std::string getNombre();
-std::string getID_Docente();
-std::string getBloques();
+
 void setCodigo(std::string);
 void setNombre(std::string);
 void setID_Docente(std::string);
 void setBloques(std::string);
+
+std::string getCodigo();
+std::string getNombre();
+std::string getID_Docente();
+std::string getBloques();
+
 void imprimirCurso(Docente);
 
 

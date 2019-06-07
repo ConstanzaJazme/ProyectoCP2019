@@ -7,54 +7,61 @@
 using namespace std;
 using namespace xlnt;
 
-Curso::Curso()//constructor
-{
-        Codigo = "0";
-        Nombre = "S.N";
-        ID_Docente = "0";
-        Bloques = "0";
+//================================== CONSTRUCTORES =====================================
+
+Curso::Curso(){
+        this->Codigo = "0";
+        this->Nombre = "S.N";
+        this->ID_Docente = "0";
+        this->Bloques = "0";
 }
-Curso::Curso(string codigo, string nombre, string idDocente, string bloques)//constructor
-{
-        Codigo = codigo;
-        Nombre = nombre;
-        ID_Docente = idDocente;
-        Bloques = bloques;
+
+Curso::Curso(string codigo, string nombre, string idDocente, string bloques){
+        this->Codigo = codigo;
+        this->Nombre = nombre;
+        this->ID_Docente = idDocente;
+        this->Bloques = bloques;
 }
-string Curso::getCodigo()
-{
-        return Codigo;
+
+//================================== METODOS SETS =====================================
+
+void Curso::setCodigo(string codigo){
+        this->Codigo = codigo;
 }
-string Curso::getNombre()
-{
-        return Nombre;
+
+void Curso::setNombre(string nombre){
+        this->Nombre = nombre;
 }
-string Curso::getID_Docente()
-{
-        return ID_Docente;
+
+void Curso::setID_Docente(string idDocente){
+        this->ID_Docente = idDocente;
 }
-string Curso::getBloques()
-{
-        return Bloques;
+
+void Curso::setBloques(string bloques){
+        this->Bloques = bloques;
 }
-void Curso::setCodigo(string codigo)
-{
-        Codigo = codigo;
+
+//================================== METODOS GETS =====================================
+
+string Curso::getCodigo(){
+        return this->Codigo;
 }
-void Curso::setNombre(string nombre)
-{
-        Nombre = nombre;
+
+string Curso::getNombre(){
+        return this->Nombre;
 }
-void Curso::setID_Docente(string idDocente)
-{
-        ID_Docente = idDocente;
+
+string Curso::getID_Docente(){
+        return this->ID_Docente;
 }
-void Curso::setBloques(string bloques)
-{
-        Bloques = bloques;
+
+string Curso::getBloques(){
+        return this->Bloques;
 }
-void Curso::imprimirCurso(Docente profesor)
-{
-        cout << "Curso: " << Codigo << " - " << Nombre << ", al mando de: "
-             << profesor.getNombre() << " en " << Bloques << " bloques." << endl;
+
+//================================== METODOS GENERALES =====================================
+
+void Curso::imprimirCurso(Docente profesor){
+        cout << "Curso: " << this->Codigo << " - " << this->Nombre << ", al mando de: "
+             << profesor.getNombre() << " en " << this->Bloques << " bloques." << endl;
 }
