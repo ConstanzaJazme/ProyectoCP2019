@@ -24,6 +24,9 @@ vector<vector<string>> crearVectorVectoresIndex(xlnt::workbook wb, int index);
 //Ordena ascendentemente el vector de docentes segun su holgura
 void quickSort(std::vector<Docente> &, int, int);
 
+//Escribe en el archivo final el resultado de hacer el horario
+void escribirResultadosEnXlsxFinal(vector<Sala>, vector<vector<vector<string>>>);
+
 //================================== FUNCIONES DOCENTES =====================================
 
 //Muestra por pantalla una lista de los profesores desde un vector

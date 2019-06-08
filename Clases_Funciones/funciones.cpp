@@ -99,6 +99,43 @@ void quickSort(vector<Docente> &numeros, int limite_izq, int limite_der){
         }
 }
 
+//Escribe en el archivo final el resultado de hacer el horario
+void escribirResultadosEnXlsxFinal(vector<Sala> vectorSala, vector<vector<vector<string> > > superCubo){
+        vector<string> DiasSemana = {"Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"};
+        vector<string> Horas = {"8:00 – 9:30", "9:40 – 11:10", "11:20 – 12:50", "13:00 – 14:30", "14:40 – 16:10", "16:20 – 17:50", "18:00 – 19:30"};
+
+        crearArchivoSalidaConNombreSheet(vectorSala); //Se crea archivo de salida
+
+        xlnt::workbook salida;
+        salida.load("salida.xlsx"); //Se abre el archivo de salida de resultados
+
+        for(int sala = 0; sala < superCubo.size(); sala++) {
+                for(int dia = 0; dia < superCubo.at(sala).size(); dia++) {
+                        for(int periodo = 0; periodo < superCubo.at(sala).at(dia).size(); periodo++) {
+
+                                //Se selecciona el sheet correspondiente
+                                xlnt::worksheet hojaActiva = salida.sheet_by_title(vectorSala.at(sala).getNombre());
+
+                                //Se escriben los dias de la semana
+                                for (int i = 0; i < DiasSemana.size(); i++) {
+                                        hojaActiva.cell(xlnt::cell_reference(i + 3, 1)).value(DiasSemana.at(i));
+                                }
+
+                                //Se escriben las horas de los bloques
+                                for (int i = 0; i < Horas.size(); i++) {
+                                        hojaActiva.cell(xlnt::cell_reference(1, i+2)).value(Horas.at(i));
+                                        hojaActiva.cell(xlnt::cell_reference(2, i+2)).value(i + 1);
+                                }
+
+                                //Se escribe el horario dependiendo de lo que haya el vector de resultados
+                                hojaActiva.cell(xlnt::cell_reference(dia + 3, periodo + 2)).value(superCubo.at(sala).at(dia).at(periodo));
+                        }
+                }
+        }
+        salida.save("salida.xlsx"); //Se guardan resultados
+
+}
+
 //================================== FUNCIONES DOCENTES =====================================
 
 //Muestra por pantalla una lista de los profesores desde un vector
