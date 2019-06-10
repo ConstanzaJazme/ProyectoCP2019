@@ -9,7 +9,7 @@ using namespace std;
 
 //================================== FUNCIONES GENERALES =====================================
 
-//Cuenta la cantidad de filas que hay los archivos mandados por argumento.
+//Cuenta la cantidad de filas que hay en los archivos mandados por argumento.
 void cantidadFilasPorArchivo(int argc, char *argv[]){
         if(argc > 1) { //Verifica la cantidad de argumentos a momento de ejecutar
                 cout << "Cantidad de archivos ingresados: " << argc-1 << endl << endl;
@@ -270,7 +270,7 @@ void ordenarPorHolguraVectorDocente(vector<Docente> vectorDocente, vector<Curso>
         quickSort(vectorDocente, 0, vectorDocente.size()-1); //se ordena ascendentemente por holgura
 
         for(Docente profe : vectorDocente) { //Muestra por pantalla
-                cout << profe.getNombre() << " " << profe.getApellido() << " /Holgura: " << profe.getHolgura() << endl;
+                cout << profe.getNombre() << " " << profe.getApellido() << " /Holgura: " << profe.getHolgura() <<" Disponibilidad: "<<39- profe.getPesoDisponibilidad()<<endl;
         }
 }
 

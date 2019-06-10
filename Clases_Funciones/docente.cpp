@@ -11,8 +11,8 @@ Docente::Docente(){
         this->ID = "0";
         this->Nombres = "SN";
         this->Apellidos = "SA";
-        this->PesoDisponibilidad = 0;
-        this->Holgura = 0;
+        this->PesoDisponibilidad = 0;   //Indica quien tiene mayor prioridad a la hora de elegir el horario, bajo el criterio de que quien tenga menos disponibilidad es el que mayor peso tendrá (CUENTA NO DISPONIBLES)
+        this->Holgura = 0;    //Indica la diferencia entre bloques totales disponibles y bloques que necesita para hacer clases
 }
 
 Docente::Docente(string id, string nombres, string apellidos, vector<vector<int> > disponibilidad, int pesoDisponibilidad, int holgura){
