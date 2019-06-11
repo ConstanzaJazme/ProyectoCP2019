@@ -192,53 +192,56 @@ void cantidadAsignaturasPorProfesor(int argc, char *argv[]){
 
 //Retorna vector de Docentes con la info de todas las pestañas del xlsx
 vector<Docente> obtenerVectorInfoDocentes(char *argv[]){
-        vector<Docente> vectorInfoDocentes; //Vector a devolver
+  vector<Docente> vectorInfoDocentes; //Vector a devolver
+  vector<vector<vector<string>>> vectorInfoDias;   //Vector que contiene vector de vectores por día
 
-        xlnt::workbook xlsDocentes;
-        xlsDocentes.load(argv[2]); //carga del xlsx
+  xlnt::workbook xlsDocentes;
+  xlsDocentes.load(argv[2]); //carga del xlsx
 
-        //obtencion de lista de los docentes
-        vector< vector<string> > vectorDocentes = crearVectorVectoresIndex(xlsDocentes, 0);
+  int cantidad_hojas= xlsDocentes.sheet_count();
 
-        //iteracion por docentes
-        for (int profesores = 1; profesores < vectorDocentes.size(); profesores++)
-        {
-                vector<vector<int> > disponibleDia;
-                string id = vectorDocentes.at(profesores).at(0);
-                string nombres = vectorDocentes.at(profesores).at(1);
-                string apellidos = vectorDocentes.at(profesores).at(2);
-                int pesoDisponibilidad = 0;
+  //iteracion por pestañas en el xlsx
+  for (int sheet = 0; sheet < cantidad_hojas; sheet++) {
+    //obtencion de informacion de cada pestaña
+    vector< vector<string> > vectorSheet = crearVectorVectoresIndex(xlsDocentes, sheet);
+    vectorInfoDias.push_back(vectorSheet);
+  }
 
-                //iteracion por pestañas en el xlsx
-                for (int sheet = 0; sheet < xlsDocentes.sheet_count(); sheet++) {
-                        //obtencion de informacion de cada pestaña
-                        vector< vector<string> > vectorSheet = crearVectorVectoresIndex(xlsDocentes, sheet);
-                        vector<int> dia;
-                        //iteracion por info de cada pestaña
-                        for (int row = 1; row < vectorSheet.size(); row++) {
-                                //verificacion la info de cierto profesor corresponde al profesor del primer for
-                                if(vectorSheet.at(row).at(0) == id) {
-                                        dia.clear(); //se limpia vector auxiliar que guarda la disponibilidad del dia
-                                        //iteracion de las ultimas filas con la info de disponibilidad
-                                        for(int col = 3; col < vectorSheet.at(row).size(); col++) {
-                                                if(vectorSheet.at(row).at(col) == "DISPONIBLE") {
-                                                        dia.push_back(1);
-                                                } else {
-                                                        dia.push_back(0);
-                                                        pesoDisponibilidad++;
-                                                }
-                                        }
-                                }
-                        }
-                        disponibleDia.push_back(dia);
-                }
-                //despues de que se recopila todos los datos se crea un objecto de clase Docente
-                Docente nuevoProfesor(id, nombres, apellidos, disponibleDia, pesoDisponibilidad, 0);
-                //se guarda el objeto en vector que los contenga a todos
-                vectorInfoDocentes.push_back(nuevoProfesor);
+  //Iteración por profesor
+  for (int profesores = 1; profesores < vectorInfoDias.at(0).size(); profesores++){
+    vector<vector<int> > disponibleDia;
+    string id = vectorInfoDias.at(0).at(profesores).at(0);    //OJO, como la información de los profesores se repite en todas las hojas, se sca solo de la inicial.
+    string nombres =  vectorInfoDias.at(0).at(profesores).at(1);
+    string apellidos = vectorInfoDias.at(0).at(profesores).at(2);
+    int pesoDisponibilidad = 0;
+
+    //Se Itera por días
+    for (int dias = 0; dias < cantidad_hojas; dias ++) {
+
+      vector<int> dia_x; //Vector que almacena la disponibilidad por día de un profesor
+
+      //Se itera por columnnas
+      for(int col = 3; col < vectorInfoDias.at(dias).at(profesores).size(); col++) {
+        if(vectorInfoDias.at(dias).at(profesores).at(col) == "DISPONIBLE") {
+          dia_x.push_back(1);
+        } else {
+          dia_x.push_back(0);
+          pesoDisponibilidad++;
         }
+      }
+      disponibleDia.push_back(dia_x);
+      dia_x.clear(); //se limpia vector auxiliar que guarda la disponibilidad del dia
+    }
 
-        return vectorInfoDocentes;
+    //despues de que se recopila todos los datos se crea un objecto de clase Docente
+    Docente nuevoProfesor(id, nombres, apellidos, disponibleDia, pesoDisponibilidad, 0);
+
+    //se guarda el objeto en vector que los contenga a todos
+    vectorInfoDocentes.push_back(nuevoProfesor);
+
+  }
+
+  return vectorInfoDocentes;
 
 }
 

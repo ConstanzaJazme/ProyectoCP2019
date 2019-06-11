@@ -21,38 +21,37 @@ int main(int argc, char *argv[])
   ** Se intentara simular distintos horarios sobre la disponibilidad del docente
   */
   // And for vectors
-    std::vector<int> another;  //Suponiendo que el docente tiene 22 bloques disponibles
-    another.push_back(1111);  //el ramo 1 tiene 6 bloques, por lo que se divide para cumplir con la restricción de 4 bloques maximos
-    another.push_back(2222);
-    another.push_back(11);
-    another.push_back(22);
-    another.push_back(3);
-    another.push_back(4);
-    another.push_back(00);
-    another.push_back(00);
-    another.push_back(00);
-    another.push_back(00);
+    // std::vector<int> another;  //Suponiendo que el docente tiene 22 bloques disponibles
+    // another.push_back(1111);  //el ramo 1 tiene 6 bloques, por lo que se divide para cumplir con la restricción de 4 bloques maximos
+    // another.push_back(2222);
+    // another.push_back(11);
+    // another.push_back(22);
+    // another.push_back(3);
+    // another.push_back(4);
+    // another.push_back(00);
+    // another.push_back(00);
+    // another.push_back(00);
+    // another.push_back(00);
+    //
+    //
+    //
+    // std::sort(another.begin(), another.end());
+    // do {    //Mientras más restricciones, más certero y pequeño es el grupo
+    //   if (another.at(0) < 10 && another.at(1) <10 && another.at(2) <10  && another.at(3) <100 && another.at(4) <10  && another.at(5) <100 && another.at(6) <10  && another.at(7) <10  ){
+    //
+    //       for(int i = 0; i < another.size(); i++) { //itera vector docente
+    //           std::cout << another.at(i) <<" ";
+    //       }
+    //       std::cout  << '\n';
+    //     }
+    //
+    //
+    // } while (std::next_permutation(another.begin(), another.end()));  //Se hace la permutación del vector
+         vector<Docente> vectorDocente = obtenerVectorInfoDocentes(argv);
+         vector<Sala> vectorSala = obtenerVectorInfoSalas(argv);
+         vector<Curso> vectorCurso = obtenerVectorInfoCursos(argv);
 
-
-
-    std::sort(another.begin(), another.end());
-    do {    //Mientras más restricciones, más certero y pequeño es el grupo
-      if (another.at(0) < 10 && another.at(1) <10 && another.at(2) <10  && another.at(3) <100 && another.at(4) <10  && another.at(5) <100 && another.at(6) <10  && another.at(7) <10  ){
-
-          for(int i = 0; i < another.size(); i++) { //itera vector docente
-              std::cout << another.at(i) <<" ";
-          }
-          std::cout  << '\n';
-        }
-
-
-    } while (std::next_permutation(another.begin(), another.end()));  //Se hace la permutación del vector
-        //vector<Docente> vectorDocente = obtenerVectorInfoDocentes(argv);
-        //vector<Sala> vectorSala = obtenerVectorInfoSalas(argv);
-        //vector<Curso> vectorCurso = obtenerVectorInfoCursos(argv);
-
-
-        //ordenarPorHolguraVectorDocente(vectorDocente, vectorCurso);
+        ordenarPorHolguraVectorDocente(vectorDocente, vectorCurso);
 
         // crearArchivoSalidaConNombreSheet(vectorSala);
 
