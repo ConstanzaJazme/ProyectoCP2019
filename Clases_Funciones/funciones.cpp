@@ -106,6 +106,14 @@ void escribirResultadosEnXlsxFinal(vector<Sala> vectorSala, vector<vector<vector
 
         crearArchivoSalidaConNombreSheet(vectorSala); //Se crea archivo de salida
 
+        xlnt::border border;
+        xlnt::border::border_property border_property;
+        border_property.style(xlnt::border_style::thin);
+        border.side(xlnt::border_side::start, border_property); // left
+        border.side(xlnt::border_side::end, border_property); // right
+        border.side(xlnt::border_side::top, border_property); // top
+        border.side(xlnt::border_side::bottom, border_property); // bottom
+
         xlnt::workbook salida;
         salida.load("salida.xlsx"); //Se abre el archivo de salida de resultados
 
@@ -116,21 +124,36 @@ void escribirResultadosEnXlsxFinal(vector<Sala> vectorSala, vector<vector<vector
                                 //Se selecciona el sheet correspondiente
                                 xlnt::worksheet hojaActiva = salida.sheet_by_title(vectorSala.at(sala).getNombre());
 
+                                hojaActiva.merge_cells("A1:B1"); //Decoracion
+                                hojaActiva.merge_cells("H6:H8"); //Decoracion
                                 //Se escriben los dias de la semana
                                 for (int i = 0; i < DiasSemana.size(); i++) {
                                         hojaActiva.cell(xlnt::cell_reference(i + 3, 1)).value(DiasSemana.at(i));
+                                        hojaActiva.cell(xlnt::cell_reference(i + 3, 1)).border(border);
+                                        hojaActiva.cell(xlnt::cell_reference(i + 3, 1)).alignment(xlnt::alignment().horizontal(xlnt::horizontal_alignment::center));
                                 }
 
                                 //Se escriben las horas de los bloques
                                 for (int i = 0; i < Horas.size(); i++) {
                                         hojaActiva.cell(xlnt::cell_reference(1, i+2)).value(Horas.at(i));
+                                        hojaActiva.cell(xlnt::cell_reference(1, i+2)).border(border);
+                                        hojaActiva.cell(xlnt::cell_reference(1, i+2)).alignment(xlnt::alignment().horizontal(xlnt::horizontal_alignment::center));
+
                                         hojaActiva.cell(xlnt::cell_reference(2, i+2)).value(i + 1);
+                                        hojaActiva.cell(xlnt::cell_reference(2, i+2)).border(border);
+                                        hojaActiva.cell(xlnt::cell_reference(2, i+2)).alignment(xlnt::alignment().horizontal(xlnt::horizontal_alignment::center));
                                 }
 
                                 //Se escribe el horario dependiendo de lo que haya el vector de resultados
                                 hojaActiva.cell(xlnt::cell_reference(dia + 3, periodo + 2)).value(superCubo.at(sala).at(dia).at(periodo));
 
-                                //Propiedades de las celdas
+                                // Bordes
+                                hojaActiva.cell(xlnt::cell_reference(dia + 3, periodo + 2)).border(border);
+
+                                // Alineamiento
+                                hojaActiva.cell(xlnt::cell_reference(dia + 3, periodo + 2)).alignment(xlnt::alignment().horizontal(xlnt::horizontal_alignment::center));
+
+                                // Tamaño de celda
                                 hojaActiva.column_properties(1).width = 12.0;
                                 hojaActiva.column_properties(2).width = 3.0;
                                 for(int i = 0; i < 6; i++) { //ancho

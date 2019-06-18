@@ -54,17 +54,16 @@ int main(int argc, char *argv[])
         vector<Sala> vectorSala = obtenerVectorInfoSalas(argv);
         vector<Curso> vectorCurso = obtenerVectorInfoCursos(argv);
 
-        ordenarPorHolguraVectorDocente(vectorDocente, vectorCurso);
+        // ordenarPorHolguraVectorDocente(vectorDocente, vectorCurso);
 
         // crearArchivoSalidaConNombreSheet(vectorSala);
 
         //cantidadFilasPorArchivo(argc, argv);
 
         //cantidadAsignaturasPorProfesor(argc, argv);
+        vector<vector<vector<string> > > superCubo;
 
-
-
-
+        escribirResultadosEnXlsxFinal(vectorSala, superCubo);
 
 
 
