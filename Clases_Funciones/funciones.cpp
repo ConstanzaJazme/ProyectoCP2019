@@ -406,15 +406,15 @@ void crearArchivoSalidaConNombreSheet2(vector<Sala> vectorSala){
         xlnt::workbook salida;
         string dest_filename = "salida.xlsx";
         salida.load(dest_filename);
-        salida.create_sheet();
+        // salida.create_sheet();
 
-        // for(int sala = 0; sala < vectorSala.size(); sala++) {
-        //         xlnt::worksheet hojaActiva = salida.sheet_by_index(sala);
-        //         string nombreSala = vectorSala.at(sala).getNombre();
-        //         hojaActiva.title(nombreSala);
-        // }
-        //
-        //
+        for(int sala = 0; sala < vectorSala.size(); sala++) {
+                xlnt::worksheet hojaActiva = salida.sheet_by_index(sala);
+                string nombreSala = vectorSala.at(sala).getNombre();
+                hojaActiva.title(nombreSala);
+        }
+
+
         salida.save(dest_filename);
 
 
