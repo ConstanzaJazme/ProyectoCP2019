@@ -10,40 +10,40 @@
 
 using namespace std;
 using namespace xlnt;
-
-vector<vector<string> > obtenerCursosPorDocente(vector<Curso> vectorCurso, string docente){
-        vector<vector<string> > cursosPorDocente;
-        for(int curso = 0; curso < vectorCurso.size(); curso++) {
-                if(vectorCurso.at(curso).getID_Docente() == docente) {
-                        vector<string> infoCurso;
-                        infoCurso.push_back(vectorCurso.at(curso).getCodigo());
-                        infoCurso.push_back(vectorCurso.at(curso).getBloques());
-                        cursosPorDocente.push_back(infoCurso);
-                }
-        }
-        return cursosPorDocente;
-}
-
-vector<vector<vector<string> > > crearSuperCubo(int cantidadSalas){
-        vector<vector<vector<string> > > superCubo;
-
-        for(int salas = 0; salas < cantidadSalas; salas++) {
-                vector<vector<string> > horarioDia;
-
-                for(int dias = 0; dias < 6; dias++) {
-                        vector<string> horarioPeriodo;
-                        int maxPeriodos = 7;
-                        if(dias == 5) maxPeriodos = 4;
-                        for(int periodos = 0; periodos < maxPeriodos; periodos++) {
-                                horarioPeriodo.push_back("0");
-                        }
-                        horarioDia.push_back(horarioPeriodo);
-                }
-                superCubo.push_back(horarioDia);
-        }
-
-        return superCubo;
-}
+//
+// vector<vector<string> > obtenerCursosPorDocente(vector<Curso> vectorCurso, string docente){
+//         vector<vector<string> > cursosPorDocente;
+//         for(int curso = 0; curso < vectorCurso.size(); curso++) {
+//                 if(vectorCurso.at(curso).getID_Docente() == docente) {
+//                         vector<string> infoCurso;
+//                         infoCurso.push_back(vectorCurso.at(curso).getCodigo());
+//                         infoCurso.push_back(vectorCurso.at(curso).getBloques());
+//                         cursosPorDocente.push_back(infoCurso);
+//                 }
+//         }
+//         return cursosPorDocente;
+// }
+//
+// vector<vector<vector<string> > > crearSuperCubo(int cantidadSalas){
+//         vector<vector<vector<string> > > superCubo;
+//
+//         for(int salas = 0; salas < cantidadSalas; salas++) {
+//                 vector<vector<string> > horarioDia;
+//
+//                 for(int dias = 0; dias < 6; dias++) {
+//                         vector<string> horarioPeriodo;
+//                         int maxPeriodos = 7;
+//                         if(dias == 5) maxPeriodos = 4;
+//                         for(int periodos = 0; periodos < maxPeriodos; periodos++) {
+//                                 horarioPeriodo.push_back("0");
+//                         }
+//                         horarioDia.push_back(horarioPeriodo);
+//                 }
+//                 superCubo.push_back(horarioDia);
+//         }
+//
+//         return superCubo;
+// }
 
 
 int main(int argc, char *argv[])
@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
         vector<Docente> vectorDocente = obtenerVectorInfoDocentes(argv);
         vector<Sala> vectorSala = obtenerVectorInfoSalas(argv);
         vector<Curso> vectorCurso = obtenerVectorInfoCursos(argv);
-        crearArchivoSalidaConNombreSheet2(vectorSala);
+        //crearArchivoSalidaConNombreSheet2(vectorSala);
 
 //         ordenarPorHolguraVectorDocente(vectorDocente, vectorCurso);
 //

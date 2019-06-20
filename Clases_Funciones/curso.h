@@ -1,7 +1,7 @@
 #ifndef CURSO_H
 #define CURSO_H
 
-#include "docente.h"
+//#include "docente.h"
 
 class Curso {
 public:
@@ -18,7 +18,7 @@ std::string getNombre();
 std::string getID_Docente();
 std::string getBloques();
 
-void imprimirCurso(Docente);
+//void imprimirCurso(Docente);
 
 
 private:
