@@ -15,13 +15,14 @@ Docente::Docente(){
         this->Holgura = 0;    //Indica la diferencia entre bloques totales disponibles y bloques que necesita para hacer clases
 }
 
-Docente::Docente(string id, string nombres, string apellidos, vector<vector<int> > disponibilidad, int pesoDisponibilidad, int holgura){
+Docente::Docente(string id, string nombres, string apellidos, vector<vector<int> > disponibilidad, int pesoDisponibilidad, int holgura, vector<Curso> asignaturas){
         this->ID = id;
         this->Nombres = nombres;
         this->Apellidos = apellidos;
         this->Disponibilidad = disponibilidad;
         this->PesoDisponibilidad = pesoDisponibilidad;
         this->Holgura = holgura;
+        this->Asignaturas= asignaturas;
 }
 
 //================================== METODOS SETS =====================================
@@ -46,6 +47,10 @@ void Docente::setHolgura(int holgura){
         this->Holgura = holgura;
 }
 
+void Docente::setAsignaturas(std::vector<Curso> asignaturas){
+      this->Asignaturas= asignaturas;
+}
+
 //================================== METODOS GETS =====================================
 
 string Docente::getID(){
@@ -66,6 +71,10 @@ int Docente::getPesoDisponibilidad(){
 
 int Docente::getHolgura(){
         return this->Holgura;
+}
+
+vector<Curso> Docente::getAsignaturas(){
+        return this->Asignaturas;
 }
 
 

@@ -61,7 +61,7 @@ string Curso::getBloques(){
 
 //================================== METODOS GENERALES =====================================
 
-void Curso::imprimirCurso(Docente profesor){
-        cout << "Curso: " << this->Codigo << " - " << this->Nombre << ", al mando de: "
-             << profesor.getNombre() << " en " << this->Bloques << " bloques." << endl;
-}
+// void Curso::imprimirCurso(Docente profesor){
+//         cout << "Curso: " << this->Codigo << " - " << this->Nombre << ", al mando de: "
+//              << profesor.getNombre() << " en " << this->Bloques << " bloques." << endl;
+// }
