@@ -85,3 +85,10 @@ void Docente::imprimirDocente(){
         }
 
 }
+
+bool Docente::estaDisponible(int dia, int periodo){
+        if(this->Disponibilidad.at(dia).at(periodo) == 1) {
+                return true;
+        }
+        return false;
+}

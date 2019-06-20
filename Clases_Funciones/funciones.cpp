@@ -104,7 +104,7 @@ void escribirResultadosEnXlsxFinal(vector<Sala> vectorSala, vector<vector<vector
         vector<string> DiasSemana = {"Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"};
         vector<string> Horas = {"8:00 – 9:30", "9:40 – 11:10", "11:20 – 12:50", "13:00 – 14:30", "14:40 – 16:10", "16:20 – 17:50", "18:00 – 19:30"};
 
-        crearArchivoSalidaConNombreSheet(vectorSala); //Se crea archivo de salida
+        crearArchivoSalidaConNombreSheet2(vectorSala); //Se crea archivo de salida
 
         xlnt::border border;
         xlnt::border::border_property border_property;
@@ -290,7 +290,7 @@ void imprimirVectorDocentes(char *argv[]){
 }
 
 //Funcion que recibe los vectores docente y curso y ordena el de docentes segun holgura y lo imprime
-void ordenarPorHolguraVectorDocente(vector<Docente> vectorDocente, vector<Curso> vectorCurso){
+void ordenarPorHolguraVectorDocente(vector<Docente> &vectorDocente, vector<Curso> vectorCurso){
         for(int i = 0; i < vectorDocente.size(); i++) { //itera vector docente
                 //calcula disponibilidad restando 39 (7 bloques * 5 diasSemana + 4 bloques dia sabado)
                 //menos lo obtenido en el objeto docente ya calculado
@@ -305,9 +305,9 @@ void ordenarPorHolguraVectorDocente(vector<Docente> vectorDocente, vector<Curso>
         }
         quickSort(vectorDocente, 0, vectorDocente.size()-1); //se ordena ascendentemente por holgura
 
-        for(Docente profe : vectorDocente) { //Muestra por pantalla
-                cout << profe.getNombre() << " " << profe.getApellido() << " /Holgura: " << profe.getHolgura() <<" Disponibilidad: "<<39- profe.getPesoDisponibilidad()<<endl;
-        }
+        // for(Docente profe : vectorDocente) { //Muestra por pantalla
+        //         cout << profe.getNombre() << " " << profe.getApellido() << " /Holgura: " << profe.getHolgura() <<" Disponibilidad: "<<39- profe.getPesoDisponibilidad()<<endl;
+        // }
 }
 
 //Retorna la busqueda de un Docente por su ID desde un vector<Docente>
@@ -398,12 +398,35 @@ vector<Sala> obtenerVectorInfoSalas(char *argv[]){
         return vectorInfoSala;
 }
 
+void crearArchivoSalidaConNombreSheet2(vector<Sala> vectorSala){
+        crearArchivoSalidaConNombreSheet();
+
+
+
+        xlnt::workbook salida;
+        string dest_filename = "salida.xlsx";
+        salida.load(dest_filename);
+        salida.create_sheet();
+
+        // for(int sala = 0; sala < vectorSala.size(); sala++) {
+        //         xlnt::worksheet hojaActiva = salida.sheet_by_index(sala);
+        //         string nombreSala = vectorSala.at(sala).getNombre();
+        //         hojaActiva.title(nombreSala);
+        // }
+        //
+        //
+        salida.save(dest_filename);
+
+
+
+}
+
 //Retorna vector de Sala con la info del xlsx
-void crearArchivoSalidaConNombreSheet(vector<Sala> vectorSala){
+void crearArchivoSalidaConNombreSheet(){
+
         //creacion de archivo Start
         xlnt::workbook wbOut;
         string dest_filename = "salida.xlsx";
-
         for(int i = 0; i < 17; i++) { //17 primeras sheets
                 wbOut.create_sheet();
         }
@@ -420,7 +443,7 @@ void crearArchivoSalidaConNombreSheet(vector<Sala> vectorSala){
         //se crean las ultimas 10 sheets antes que lanze el error de core.
         xlnt::workbook resultado2;
         resultado2.load(dest_filename);
-        for(int i = 0; i < 10; i++) {
+        for(int i = 0; i < 16; i++) {
                 resultado2.create_sheet();
         }
         resultado2.save(dest_filename);
@@ -428,16 +451,6 @@ void crearArchivoSalidaConNombreSheet(vector<Sala> vectorSala){
         //Terminar creacion de archivo END
 
         //Colocar nombres pestañas
-        xlnt::workbook salida;
-        salida.load(dest_filename);
 
-        for(int sala = 0; sala < vectorSala.size(); sala++) {
-                xlnt::worksheet hojaActiva = salida.sheet_by_index(sala);
-                string nombreSala = vectorSala.at(sala).getNombre();
-                hojaActiva.title(nombreSala);
-        }
-
-
-        salida.save(dest_filename);
 
 }

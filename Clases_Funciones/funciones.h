@@ -42,7 +42,7 @@ vector<Docente> obtenerVectorInfoDocentes(char *argv[]);
 void imprimirVectorDocentes(char *argv[]);
 
 //Funcion que recibe los vectores docente y curso y ordena el de docentes segun holgura y lo imprime
-void ordenarPorHolguraVectorDocente(std::vector<Docente>,std::vector<Curso>);
+void ordenarPorHolguraVectorDocente(std::vector<Docente> &,std::vector<Curso>);
 
 //Retorna la busqueda de un Docente por su ID desde un vector<Docente>
 Docente buscarDocenteByID(std::string, std::vector<Docente>);
@@ -60,8 +60,10 @@ int obtenerBloquesPorDocenteByCurso(std::string, std::vector<Curso>);
 
 //================================== FUNCIONES SALAS =====================================
 
+void crearArchivoSalidaConNombreSheet2(std::vector<Sala>);
+
 //Crea el archivo .xlsx de salida y coloca el nombre de cada pestaña segun las salas disponibles en Salas.xlsx
-void crearArchivoSalidaConNombreSheet(std::vector<Sala>);
+void crearArchivoSalidaConNombreSheet();
 
 //Retorna vector de Sala con la info del xlsx
 vector<Sala> obtenerVectorInfoSalas(char *argv[]);

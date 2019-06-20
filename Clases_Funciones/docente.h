@@ -19,6 +19,7 @@ int getPesoDisponibilidad();
 int getHolgura();
 
 void imprimirDocente();
+bool estaDisponible(int, int);
 
 
 private:
