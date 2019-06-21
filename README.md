@@ -10,7 +10,7 @@ $ sudo apt-get install cmake
 2. Instalar Libreria.
 
 ```
-$ git clone https://github.com/tfussell/xlnt.git
+$ git clone https://github.com/FabianAlvaradoDonoso/xlnt
 $ cd xlnt
 $ cmake .
 $ make -j 2
