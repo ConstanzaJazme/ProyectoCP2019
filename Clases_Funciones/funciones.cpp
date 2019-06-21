@@ -104,7 +104,7 @@ void escribirResultadosEnXlsxFinal(vector<Sala> vectorSala, vector<vector<vector
         vector<string> DiasSemana = {"Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"};
         vector<string> Horas = {"8:00 – 9:30", "9:40 – 11:10", "11:20 – 12:50", "13:00 – 14:30", "14:40 – 16:10", "16:20 – 17:50", "18:00 – 19:30"};
 
-        crearArchivoSalidaConNombreSheet2(vectorSala); //Se crea archivo de salida
+        crearArchivoSalidaConNombreSheet(vectorSala); //Se crea archivo de salida
 
         xlnt::border border;
         xlnt::border::border_property border_property;
@@ -226,88 +226,88 @@ void cantidadAsignaturasPorProfesor(int argc, char *argv[]){
 
 //Cuenta la cantidad de asignarutas de cada profesor y las muestra por pantalla
 vector <Curso> VectorVectoresAsignatura(vector< vector<string> > vectorCursos, string id_docente){
-  vector <Curso> CursosxDocente;
-  //se itera las asignaturas que hay en el vector de vectores de asignaturas
-  for (int asignaturas = 1; asignaturas < vectorCursos.size(); asignaturas++) {
-    //verificacion si el id del profesor que esta relacionado en
-    //las asignaturas concuerda con el id del profesor
-    if(vectorCursos.at(asignaturas).at(2) == id_docente) {
-      string codigo = vectorCursos.at(asignaturas).at(0);
-      string nombre = vectorCursos.at(asignaturas).at(1);
-      string idDocente = vectorCursos.at(asignaturas).at(2);
-      string bloques = vectorCursos.at(asignaturas).at(5);
+        vector <Curso> CursosxDocente;
+        //se itera las asignaturas que hay en el vector de vectores de asignaturas
+        for (int asignaturas = 1; asignaturas < vectorCursos.size(); asignaturas++) {
+                //verificacion si el id del profesor que esta relacionado en
+                //las asignaturas concuerda con el id del profesor
+                if(vectorCursos.at(asignaturas).at(2) == id_docente) {
+                        string codigo = vectorCursos.at(asignaturas).at(0);
+                        string nombre = vectorCursos.at(asignaturas).at(1);
+                        string idDocente = vectorCursos.at(asignaturas).at(2);
+                        string bloques = vectorCursos.at(asignaturas).at(5);
 
-      Curso nuevoCurso(codigo, nombre, idDocente, bloques);
-      CursosxDocente.push_back(nuevoCurso);
-    }
-  }
+                        Curso nuevoCurso(codigo, nombre, idDocente, bloques);
+                        CursosxDocente.push_back(nuevoCurso);
+                }
+        }
 
-  return CursosxDocente;
+        return CursosxDocente;
 
 }
 
 
 //Retorna vector de Docentes con la info de todas las pestañas del xlsx
 vector<Docente> obtenerVectorInfoDocentes(char *argv[]){
-  vector<Docente> vectorInfoDocentes; //Vector a devolver
-  vector<vector<vector<string>>> vectorInfoDias;   //Vector que contiene vector de vectores por día
+        vector<Docente> vectorInfoDocentes; //Vector a devolver
+        vector<vector<vector<string> > > vectorInfoDias; //Vector que contiene vector de vectores por día
 
-  xlnt::workbook xlsDocentes;
-  xlsDocentes.load(argv[2]); //carga del xlsx
+        xlnt::workbook xlsDocentes;
+        xlsDocentes.load(argv[2]); //carga del xlsx
 
-  xlnt::workbook xlsCursos; //instancia de objeto que aloja el xlsx
-  xlsCursos.load(argv[1]); //carga del xlsx
+        xlnt::workbook xlsCursos; //instancia de objeto que aloja el xlsx
+        xlsCursos.load(argv[1]); //carga del xlsx
 
-  vector< vector<string> > CursosDocente = crearVectorVectoresIndex(xlsCursos, 0); //Vector de vectores de los cursos
+        vector< vector<string> > CursosDocente = crearVectorVectoresIndex(xlsCursos, 0); //Vector de vectores de los cursos
 
-  int cantidad_hojas= xlsDocentes.sheet_count();
+        int cantidad_hojas= xlsDocentes.sheet_count();
 
-  //iteracion por pestañas en el xlsx
-  for (int sheet = 0; sheet < cantidad_hojas; sheet++) {
-    //obtencion de informacion de cada pestaña
-    vector< vector<string> > vectorSheet = crearVectorVectoresIndex(xlsDocentes, sheet);
-    vectorInfoDias.push_back(vectorSheet);
-  }
-
-  //Iteración por profesor
-  for (int profesores = 1; profesores < vectorInfoDias.at(0).size(); profesores++){
-    vector<vector<int> > disponibleDia;
-    vector <Curso> asignaturas;
-
-    string id = vectorInfoDias.at(0).at(profesores).at(0);    //OJO, como la información de los profesores se repite en todas las hojas, se sca solo de la inicial.
-    string nombres =  vectorInfoDias.at(0).at(profesores).at(1);
-    string apellidos = vectorInfoDias.at(0).at(profesores).at(2);
-    int pesoDisponibilidad = 0;
-
-    //Se Itera por días
-    for (int dias = 0; dias < cantidad_hojas; dias ++) {
-
-      vector<int> dia_x; //Vector que almacena la disponibilidad por día de un profesor
-
-      //Se itera por columnnas
-      for(int col = 3; col < vectorInfoDias.at(dias).at(profesores).size(); col++) {
-        if(vectorInfoDias.at(dias).at(profesores).at(col) == "DISPONIBLE") {
-          dia_x.push_back(1);
-        } else {
-          dia_x.push_back(0);
-          pesoDisponibilidad++;
+        //iteracion por pestañas en el xlsx
+        for (int sheet = 0; sheet < cantidad_hojas; sheet++) {
+                //obtencion de informacion de cada pestaña
+                vector< vector<string> > vectorSheet = crearVectorVectoresIndex(xlsDocentes, sheet);
+                vectorInfoDias.push_back(vectorSheet);
         }
-      }
-      disponibleDia.push_back(dia_x);
-      dia_x.clear(); //se limpia vector auxiliar que guarda la disponibilidad del dia
-    }
 
-    asignaturas=VectorVectoresAsignatura(CursosDocente, id);
+        //Iteración por profesor
+        for (int profesores = 1; profesores < vectorInfoDias.at(0).size(); profesores++) {
+                vector<vector<int> > disponibleDia;
+                vector <Curso> asignaturas;
 
-    //despues de que se recopila todos los datos se crea un objecto de clase Docente
-    Docente nuevoProfesor(id, nombres, apellidos, disponibleDia, pesoDisponibilidad, 0,asignaturas);
-    //se guarda el objeto en vector que los contenga a todos
-    vectorInfoDocentes.push_back(nuevoProfesor);
-    //nuevoProfesor.imprimirDocente();
+                string id = vectorInfoDias.at(0).at(profesores).at(0); //OJO, como la información de los profesores se repite en todas las hojas, se sca solo de la inicial.
+                string nombres =  vectorInfoDias.at(0).at(profesores).at(1);
+                string apellidos = vectorInfoDias.at(0).at(profesores).at(2);
+                int pesoDisponibilidad = 0;
 
-  }
+                //Se Itera por días
+                for (int dias = 0; dias < cantidad_hojas; dias++) {
 
-  return vectorInfoDocentes;
+                        vector<int> dia_x; //Vector que almacena la disponibilidad por día de un profesor
+
+                        //Se itera por columnnas
+                        for(int col = 3; col < vectorInfoDias.at(dias).at(profesores).size(); col++) {
+                                if(vectorInfoDias.at(dias).at(profesores).at(col) == "DISPONIBLE") {
+                                        dia_x.push_back(1);
+                                } else {
+                                        dia_x.push_back(0);
+                                        pesoDisponibilidad++;
+                                }
+                        }
+                        disponibleDia.push_back(dia_x);
+                        dia_x.clear(); //se limpia vector auxiliar que guarda la disponibilidad del dia
+                }
+
+                asignaturas=VectorVectoresAsignatura(CursosDocente, id);
+
+                //despues de que se recopila todos los datos se crea un objecto de clase Docente
+                Docente nuevoProfesor(id, nombres, apellidos, disponibleDia, pesoDisponibilidad, 0,asignaturas);
+                //se guarda el objeto en vector que los contenga a todos
+                vectorInfoDocentes.push_back(nuevoProfesor);
+                //nuevoProfesor.imprimirDocente();
+
+        }
+
+        return vectorInfoDocentes;
 
 }
 
@@ -431,59 +431,29 @@ vector<Sala> obtenerVectorInfoSalas(char *argv[]){
         return vectorInfoSala;
 }
 
-void crearArchivoSalidaConNombreSheet2(vector<Sala> vectorSala){
-        crearArchivoSalidaConNombreSheet();
 
+//Retorna vector de Sala con la info del xlsx
+void crearArchivoSalidaConNombreSheet(vector<Sala> vectorSala){
 
-
-        xlnt::workbook salida;
+        //creacion de archivo Start
+        xlnt::workbook wbOut;
         string dest_filename = "salida.xlsx";
-        salida.load(dest_filename);
-        // salida.create_sheet();
+        for(int i = 0; i < vectorSala.size() - 1; i++) { //17 primeras sheets
+                wbOut.create_sheet();
+        }
+        wbOut.save(dest_filename);
 
+        //Terminar creacion de archivo END
+
+        //Colocar nombres pestañas
+        xlnt::workbook salida;
+        salida.load(dest_filename);
         for(int sala = 0; sala < vectorSala.size(); sala++) {
                 xlnt::worksheet hojaActiva = salida.sheet_by_index(sala);
                 string nombreSala = vectorSala.at(sala).getNombre();
                 hojaActiva.title(nombreSala);
         }
-
-
         salida.save(dest_filename);
-
-
-
-}
-
-//Retorna vector de Sala con la info del xlsx
-void crearArchivoSalidaConNombreSheet(){
-
-        //creacion de archivo Start
-        xlnt::workbook wbOut;
-        string dest_filename = "salida.xlsx";
-        for(int i = 0; i < 17; i++) { //17 primeras sheets
-                wbOut.create_sheet();
-        }
-        wbOut.save(dest_filename);
-
-        //se abre nuevamente ya que da un error y se crean las siguiente 13 sheets
-        xlnt::workbook resultado;
-        resultado.load(dest_filename);
-        for(int i = 0; i < 13; i++) {
-                resultado.create_sheet();
-        }
-        resultado.save(dest_filename);
-
-        //se crean las ultimas 10 sheets antes que lanze el error de core.
-        xlnt::workbook resultado2;
-        resultado2.load(dest_filename);
-        for(int i = 0; i < 16; i++) {
-                resultado2.create_sheet();
-        }
-        resultado2.save(dest_filename);
-
-        //Terminar creacion de archivo END
-
-        //Colocar nombres pestañas
 
 
 }

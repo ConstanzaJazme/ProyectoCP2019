@@ -60,10 +60,8 @@ int obtenerBloquesPorDocenteByCurso(std::string, std::vector<Curso>);
 
 //================================== FUNCIONES SALAS =====================================
 
-void crearArchivoSalidaConNombreSheet2(std::vector<Sala>);
-
 //Crea el archivo .xlsx de salida y coloca el nombre de cada pestaña segun las salas disponibles en Salas.xlsx
-void crearArchivoSalidaConNombreSheet();
+void crearArchivoSalidaConNombreSheet(std::vector<Sala>);
 
 //Retorna vector de Sala con la info del xlsx
 vector<Sala> obtenerVectorInfoSalas(char *argv[]);
