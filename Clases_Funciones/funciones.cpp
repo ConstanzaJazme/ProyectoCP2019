@@ -435,25 +435,15 @@ vector<Sala> obtenerVectorInfoSalas(char *argv[]){
 //Retorna vector de Sala con la info del xlsx
 void crearArchivoSalidaConNombreSheet(vector<Sala> vectorSala){
 
-        //creacion de archivo Start
-        xlnt::workbook wbOut;
+        xlnt::workbook wbOut; //Instancia de workbook
         string dest_filename = "salida.xlsx";
-        for(int i = 0; i < vectorSala.size() - 1; i++) { //17 primeras sheets
-                wbOut.create_sheet();
+        for(int i = 0; i < vectorSala.size(); i++) {  //Se crea una hoja por sala
+                wbOut.create_sheet();   //Crea hoja
+                xlnt::worksheet hojaActiva = wbOut.sheet_by_index(i); //Se busca la hoja recien creada
+                string nombreSala = vectorSala.at(i).getNombre(); //Se obtiene el nombre de la sala
+                hojaActiva.title(nombreSala); //Se agrega el nombre de la sala a la hoja
         }
-        wbOut.save(dest_filename);
-
-        //Terminar creacion de archivo END
-
-        //Colocar nombres pestañas
-        xlnt::workbook salida;
-        salida.load(dest_filename);
-        for(int sala = 0; sala < vectorSala.size(); sala++) {
-                xlnt::worksheet hojaActiva = salida.sheet_by_index(sala);
-                string nombreSala = vectorSala.at(sala).getNombre();
-                hojaActiva.title(nombreSala);
-        }
-        salida.save(dest_filename);
-
+        wbOut.remove_sheet(wbOut.sheet_by_index(vectorSala.size()));  //Se remueve la hoja que viene por defecto en el workbook
+        wbOut.save(dest_filename);    //Se guarda en el archivo de destino
 
 }
