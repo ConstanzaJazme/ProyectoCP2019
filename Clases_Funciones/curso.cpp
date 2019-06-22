@@ -13,10 +13,10 @@ Curso::Curso(){
         this->Codigo = "0";
         this->Nombre = "S.N";
         this->ID_Docente = "0";
-        this->Bloques = "0";
+        this->Bloques = 0;
 }
 
-Curso::Curso(string codigo, string nombre, string idDocente, string bloques){
+Curso::Curso(string codigo, string nombre, string idDocente, int bloques){
         this->Codigo = codigo;
         this->Nombre = nombre;
         this->ID_Docente = idDocente;
@@ -37,7 +37,7 @@ void Curso::setID_Docente(string idDocente){
         this->ID_Docente = idDocente;
 }
 
-void Curso::setBloques(string bloques){
+void Curso::setBloques(int bloques){
         this->Bloques = bloques;
 }
 
@@ -55,7 +55,7 @@ string Curso::getID_Docente(){
         return this->ID_Docente;
 }
 
-string Curso::getBloques(){
+int Curso::getBloques(){
         return this->Bloques;
 }
 

@@ -6,7 +6,6 @@
 
 using namespace std;
 
-
 //================================== FUNCIONES GENERALES =====================================
 
 //Cuenta la cantidad de filas que hay en los archivos mandados por argumento.
@@ -151,25 +150,70 @@ void borde_alineamiento_tam(xlnt::worksheet hoja, xlnt::border border, int dia, 
 
 //Escribe en el archivo final el resultado de hacer el horario
 void escribirResultadosEnXlsxFinal(vector<Sala> vectorSala, vector<vector<vector<string> > > superCubo){
-        crearArchivoSalidaConNombreSheet(vectorSala); //Se crea archivo de salida
-        xlnt::border border;
-        xlnt::workbook salida;
-        border=estilo_borde(border);
-        salida.load("salida.xlsx"); //Se carga el archivo de salida de resultados
-        for(int sala = 0; sala < superCubo.size(); sala++) {
-                for(int dia = 0; dia < superCubo.at(sala).size(); dia++) {
-                        for(int periodo = 0; periodo < superCubo.at(sala).at(dia).size(); periodo++) {
-                                //Se selecciona la hoja correspondiente
-                                xlnt::worksheet hojaActiva = salida.sheet_by_title(vectorSala.at(sala).getNombre());
-                                //Se escribe el horario dependiendo de lo que haya el vector de resultados
-                                hojaActiva.cell(xlnt::cell_reference(dia + 3, periodo + 2)).value(superCubo.at(sala).at(dia).at(periodo));
-                                borde_alineamiento_tam(hojaActiva,border,dia,periodo);
-                        }
-                }
-        }
-        salida.save("salida.xlsx"); //Se guardan resultados
+  crearArchivoSalidaConNombreSheet(vectorSala); //Se crea archivo de salida
+  xlnt::border border;
+  xlnt::workbook salida;
+  border=estilo_borde(border);
+  salida.load("salida.xlsx"); //Se carga el archivo de salida de resultados
+  for(int sala = 0; sala < superCubo.size(); sala++) {
+    for(int dia = 0; dia < superCubo.at(sala).size(); dia++) {
+      for(int periodo = 0; periodo < superCubo.at(sala).at(dia).size(); periodo++) {
+        //Se selecciona la hoja correspondiente
+        xlnt::worksheet hojaActiva = salida.sheet_by_title(vectorSala.at(sala).getNombre());
+        //Se escribe el horario dependiendo de lo que haya el vector de resultados
+        hojaActiva.cell(xlnt::cell_reference(dia + 3, periodo + 2)).value(superCubo.at(sala).at(dia).at(periodo));
+        borde_alineamiento_tam(hojaActiva,border,dia,periodo);
+      }
+    }
+  }
+  salida.save("salida.xlsx"); //Se guardan resultados
 }
 
+//Funcion que inicializa un SuperCubo, el cual se recorre por sala,dia,periodo y representa el Excel de salida
+vector<vector<vector<string> > > crearSuperCubo(vector<Sala> vectorSala){
+        vector<vector<vector<string> > > superCubo;
+        for(int salas = 0; salas < vectorSala.size(); salas++) {
+                vector<vector<string> > horarioDia;
+                for(int dias = 0; dias < 6; dias++) {
+                        vector<string> horarioPeriodo;
+                        int maxPeriodos = 7;
+                        if(dias == 5) maxPeriodos = 4;
+                        for(int periodos = 0; periodos < maxPeriodos; periodos++) {
+                                horarioPeriodo.push_back("*" + vectorSala.at(salas).getNombre());
+                        }
+                        horarioDia.push_back(horarioPeriodo);
+                }
+                superCubo.push_back(horarioDia);
+        }
+        return superCubo;
+}
+
+//Compueba si un ramo es de informatica
+bool esRamoInformatica(string ramo){
+        if(ramo[0] == 'I' && ramo[1] == 'N' && ramo[2] == 'F') return true;
+        return false;
+}
+
+//Compueba si una sala es LAB
+bool esLab(string sala){
+        string nombreSala = sala.substr(0,3);
+        if(nombreSala == "LAB") {
+                return true;
+        }
+        return false;
+}
+
+bool asignarAsignatura(vector<vector<vector<string> > > superCubo, int salas, Docente profesor, string idRamo){
+  for(int dias = 0; dias < superCubo.size(); dias++) {
+    for(int periodos = 0; periodos < superCubo.at(dias).size(); periodos++) {
+      if(superCubo.at(salas).at(dias).at(periodos)[0] == '*' && profesor.estaDisponible(dias, periodos)) {
+        superCubo.at(salas).at(dias).at(periodos) = idRamo + " - " + profesor.getID();
+        return true;
+      }
+    }
+  }
+  return false;
+}
 //================================== FUNCIONES DOCENTES =====================================
 
 //Muestra por pantalla una lista de los profesores desde un vector
@@ -224,29 +268,25 @@ void cantidadAsignaturasPorProfesor(int argc, char *argv[]){
 
 }
 
-
-//Cuenta la cantidad de asignarutas de cada profesor y las muestra por pantalla
+//Retorna un vector de la clase CURSO, el cual contiene todos los cursos de un profesor
 vector <Curso> VectorVectoresAsignatura(vector< vector<string> > vectorCursos, string id_docente){
-        vector <Curso> CursosxDocente;
-        //se itera las asignaturas que hay en el vector de vectores de asignaturas
-        for (int asignaturas = 1; asignaturas < vectorCursos.size(); asignaturas++) {
-                //verificacion si el id del profesor que esta relacionado en
-                //las asignaturas concuerda con el id del profesor
-                if(vectorCursos.at(asignaturas).at(2) == id_docente) {
-                        string codigo = vectorCursos.at(asignaturas).at(0);
-                        string nombre = vectorCursos.at(asignaturas).at(1);
-                        string idDocente = vectorCursos.at(asignaturas).at(2);
-                        string bloques = vectorCursos.at(asignaturas).at(5);
-
-                        Curso nuevoCurso(codigo, nombre, idDocente, bloques);
-                        CursosxDocente.push_back(nuevoCurso);
-                }
-        }
-
-        return CursosxDocente;
-
+  vector <Curso> CursosxDocente;
+  //se itera las asignaturas que hay en el vector de vectores de asignaturas
+  for (int asignaturas = 1; asignaturas < vectorCursos.size(); asignaturas++) {
+    //verificacion si el id del profesor que esta relacionado en
+    //las asignaturas concuerda con el id del profesor
+    if(vectorCursos.at(asignaturas).at(2) == id_docente) {
+      string codigo = vectorCursos.at(asignaturas).at(0);
+      string nombre = vectorCursos.at(asignaturas).at(1);
+      string idDocente = vectorCursos.at(asignaturas).at(2);
+      int bloques_pedagogicos = stoi(vectorCursos.at(asignaturas).at(5));
+      int bloques= bloquesReales(bloques_pedagogicos);
+      Curso nuevoCurso(codigo, nombre, idDocente, bloques);
+      CursosxDocente.push_back(nuevoCurso);
+    }
+  }
+  return CursosxDocente;
 }
-
 
 //Retorna vector de Docentes con la info de todas las pestañas del xlsx
 vector<Docente> obtenerVectorInfoDocentes(char *argv[]){
@@ -357,30 +397,33 @@ Docente buscarDocenteByID(string id, vector<Docente> vector){
 
 //================================== FUNCIONES CURSOS =====================================
 
+//Conversion de horas pedagogicas a Bloques
+int bloquesReales(int bloques){
+  if (bloques%2==0){
+    return bloques/2;
+  }
+  return (bloques/2)+1;
+}
+
 //Retorna vector de Curso con la info del xlsx
 vector<Curso> obtenerVectorInfoCursos(char *argv[]){
-        vector<Curso> vectorInfoCurso; //Vector a devolver
+  vector<Curso> vectorInfoCurso; //Vector a devolver
+  xlnt::workbook xlsCurso;
+  xlsCurso.load(argv[1]); //carga del xlsx
+  //obtencion de lista de los docentes
+  vector< vector<string> > vectorCurso = crearVectorVectoresIndex(xlsCurso, 0);
+  //iteracion por curso
+  for (int curso = 1; curso < vectorCurso.size(); curso++)
+  {
+    string codigo = vectorCurso.at(curso).at(0);
+    string nombre = vectorCurso.at(curso).at(1);
+    string idDocente = vectorCurso.at(curso).at(2);
+    int bloques = stoi(vectorCurso.at(curso).at(5));
+    Curso nuevoCurso(codigo, nombre, idDocente, bloques);
+    vectorInfoCurso.push_back(nuevoCurso);
 
-        xlnt::workbook xlsCurso;
-        xlsCurso.load(argv[1]); //carga del xlsx
-
-        //obtencion de lista de los docentes
-        vector< vector<string> > vectorCurso = crearVectorVectoresIndex(xlsCurso, 0);
-
-        //iteracion por curso
-        for (int curso = 1; curso < vectorCurso.size(); curso++)
-        {
-                string codigo = vectorCurso.at(curso).at(0);
-                string nombre = vectorCurso.at(curso).at(1);
-                string idDocente = vectorCurso.at(curso).at(2);
-                string bloques = vectorCurso.at(curso).at(5);
-
-                Curso nuevoCurso(codigo, nombre, idDocente, bloques);
-                vectorInfoCurso.push_back(nuevoCurso);
-
-        }
-        return vectorInfoCurso;
-
+  }
+  return vectorInfoCurso;
 }
 
 // //Imprime vector de Docentes
@@ -400,7 +443,7 @@ int obtenerBloquesPorDocenteByCurso(string id, vector<Curso> vector){
         int holgura = 0;
         for(Curso c : vector) { //itera el vector
                 if(c.getID_Docente() == id) { //verifica si tienen el mismo ID
-                        holgura += stoi(c.getBloques()); //si son iguales, suma su holgura
+                        holgura += c.getBloques(); //si son iguales, suma su holgura
                 }
         }
         return holgura;

@@ -35,6 +35,16 @@ void borde_alineamiento_tam(xlnt::worksheet, xlnt::border, int, int);
 //Escribe en el archivo final el resultado de hacer el horario
 void escribirResultadosEnXlsxFinal(vector<Sala>, vector<vector<vector<string>>>);
 
+//Funcion que genera un SuperCubo, el cual se recorre por sala,dia,periodo y representa el Excel de salida
+vector<vector<vector<string> > > crearSuperCubo(vector<Sala> );
+
+//Compueba si un ramo es de informatica
+bool esRamoInformatica(string);
+
+//Compueba si una sala es LAB
+bool esLab(string);
+
+bool asignarAsignatura(vector<vector<vector<string> > > , int , Docente, string );
 //================================== FUNCIONES DOCENTES =====================================
 
 //Muestra por pantalla una lista de los profesores desde un vector
@@ -56,6 +66,8 @@ void ordenarPorHolguraVectorDocente(std::vector<Docente> &,std::vector<Curso>);
 Docente buscarDocenteByID(std::string, std::vector<Docente>);
 
 //================================== FUNCIONES CURSOS =====================================
+
+int bloquesReales(int);
 
 //Retorna vector de Curso con la info del xlsx
 vector<Curso> obtenerVectorInfoCursos(char *argv[]);
