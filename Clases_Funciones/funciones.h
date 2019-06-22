@@ -24,6 +24,14 @@ vector<vector<string>> crearVectorVectoresIndex(xlnt::workbook wb, int index);
 //Ordena ascendentemente el vector de docentes segun su holgura
 void quickSort(std::vector<Docente> &, int, int);
 
+xlnt::border estilo_borde(xlnt::border);
+
+void escribirDias(xlnt::worksheet, xlnt::border);
+
+void escribirPeriodos(xlnt::worksheet, xlnt::border);
+
+void borde_alineamiento_tam(xlnt::worksheet, xlnt::border, int, int);
+
 //Escribe en el archivo final el resultado de hacer el horario
 void escribirResultadosEnXlsxFinal(vector<Sala>, vector<vector<vector<string>>>);
 
