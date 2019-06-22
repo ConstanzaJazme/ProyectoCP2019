@@ -162,6 +162,7 @@ void escribirResultadosEnXlsxFinal(vector<Sala> vectorSala, vector<vector<vector
         xlnt::worksheet hojaActiva = salida.sheet_by_title(vectorSala.at(sala).getNombre());
         //Se escribe el horario dependiendo de lo que haya el vector de resultados
         hojaActiva.cell(xlnt::cell_reference(dia + 3, periodo + 2)).value(superCubo.at(sala).at(dia).at(periodo));
+
         borde_alineamiento_tam(hojaActiva,border,dia,periodo);
       }
     }
@@ -203,9 +204,9 @@ bool esLab(string sala){
         return false;
 }
 
-bool asignarAsignatura(vector<vector<vector<string> > > superCubo, int salas, Docente profesor, string idRamo){
-  for(int dias = 0; dias < superCubo.size(); dias++) {
-    for(int periodos = 0; periodos < superCubo.at(dias).size(); periodos++) {
+bool asignarAsignatura(vector<vector<vector<string> > > &superCubo, int salas, Docente profesor, string idRamo){
+  for(int dias = 0; dias < superCubo.at(salas).size(); dias++) {
+    for(int periodos = 0; periodos < superCubo.at(salas).at(dias).size(); periodos++) {
       if(superCubo.at(salas).at(dias).at(periodos)[0] == '*' && profesor.estaDisponible(dias, periodos)) {
         superCubo.at(salas).at(dias).at(periodos) = idRamo + " - " + profesor.getID();
         return true;

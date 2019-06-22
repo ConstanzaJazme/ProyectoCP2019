@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
         for(int salas = 0; salas < vectorSala.size(); salas++) {   //Se recorren todas las salas
           bool esLaboratorio = esLab(vectorSala.at(salas).getNombre());   //Se verifica si la sala es de LAB
           if(!ramoInformatica && !esLaboratorio) {    //Si el ramo no de informatica ni la sala es de laboratorio
-            asignar=asignarAsignatura(superCubo,salas,profesor,idRamo);
+            asignar=asignarAsignatura(superCubo,salas,profesor,idRamo);   //Si el ramo puede ser asignado, la variable asignar sera true
             if (asignar) goto Encontrado;
           }
           if(ramoInformatica && esLaboratorio) {
@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
     // cout << docente << endl;
   }
   // cout << "Ramos Totales: " << ramos << endl;
-//  escribirResultadosEnXlsxFinal(vectorSala, superCubo);
+escribirResultadosEnXlsxFinal(vectorSala, superCubo);
 
 
 
