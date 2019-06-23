@@ -17,10 +17,10 @@ int main(int argc, char *argv[])
         vector<Docente> vectorDocente = obtenerVectorInfoDocentes(argv);
         //Obtiene la información de las salas, almacenando el nombre de las salas en la clase SALA
         vector<Sala> vectorSala = obtenerVectorInfoSalas(argv);
-        //Obtiene la información de los cursos, almacenando codigo, nombre y bloques en la clase CURSO
-        vector<Curso> vectorCurso = obtenerVectorInfoCursos(argv);
+        // //Obtiene la información de los cursos, almacenando codigo, nombre y bloques en la clase CURSO
+        // vector<Curso> vectorCurso = obtenerVectorInfoCursos(argv);
 
-        ordenarPorHolguraVectorDocente(vectorDocente, vectorCurso);
+        ordenarPorHolguraVectorDocente(vectorDocente);
 
         vector<vector<vector<string> > > superCubo = crearSuperCubo(vectorSala);
         int ramos = 0;

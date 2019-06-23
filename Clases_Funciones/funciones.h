@@ -60,7 +60,7 @@ vector<Docente> obtenerVectorInfoDocentes(char *argv[]);
 void imprimirVectorDocentes(char *argv[]);
 
 //Funcion que recibe los vectores docente y curso y ordena el de docentes segun holgura y lo imprime
-void ordenarPorHolguraVectorDocente(std::vector<Docente> &,std::vector<Curso>);
+void ordenarPorHolguraVectorDocente(std::vector<Docente> &);
 
 //Retorna la busqueda de un Docente por su ID desde un vector<Docente>
 Docente buscarDocenteByID(std::string, std::vector<Docente>);
@@ -76,7 +76,7 @@ vector<Curso> obtenerVectorInfoCursos(char *argv[]);
 void imprimirVectorCursos(char *argv[]);
 
 //Retorna el numero de bloques totales asignados a un profesor desde vector Curso
-int obtenerBloquesPorDocenteByCurso(std::string, std::vector<Curso>);
+int obtenerBloquesPorDocenteByCurso(std::vector<Curso>);
 
 //================================== FUNCIONES SALAS =====================================
 
