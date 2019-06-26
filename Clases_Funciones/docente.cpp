@@ -48,7 +48,7 @@ void Docente::setHolgura(int holgura){
 }
 
 void Docente::setAsignaturas(std::vector<Curso> asignaturas){
-      this->Asignaturas= asignaturas;
+        this->Asignaturas= asignaturas;
 }
 
 //================================== METODOS GETS =====================================
@@ -100,4 +100,8 @@ bool Docente::estaDisponible(int dia, int periodo){
                 return true;
         }
         return false;
+}
+
+void Docente::reservarHorario(int dia, int periodo){
+        this->Disponibilidad.at(dia).at(periodo) = 0;
 }

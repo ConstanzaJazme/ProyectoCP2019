@@ -44,7 +44,7 @@ bool esRamoInformatica(string);
 //Compueba si una sala es LAB
 bool esLab(string);
 
-bool asignarAsignatura(vector<vector<vector<string> > > &, int , Docente, string );
+bool asignarAsignatura(vector<vector<vector<string> > > &, int , Docente &, string );
 //================================== FUNCIONES DOCENTES =====================================
 
 //Muestra por pantalla una lista de los profesores desde un vector

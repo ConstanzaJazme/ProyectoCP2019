@@ -26,6 +26,7 @@ std::vector<Curso> getAsignaturas();
 
 void imprimirDocente();
 bool estaDisponible(int, int);
+void reservarHorario(int, int);
 
 
 private:
