@@ -50,16 +50,13 @@ void imprimirVectorNPrimeros(vector<vector<string> > vector, int nPrimeros){
 
 //Crea vector que contiene la info de cierta pestaña del xlsx
 vector<vector<string> > crearVectorVectoresIndex(xlnt::workbook wb, int index){
-        xlnt::worksheet hojaActiva = wb.sheet_by_index(index);
-
+        xlnt::worksheet hojaActiva = wb.sheet_by_index(index);    //Se accede a la hoja de posición index en el XLSX
         vector<vector<string> > vectorHojaCompleta;
-
-        for(auto fila : hojaActiva.rows(false)) {
+        for(auto fila : hojaActiva.rows(false)) {   //Se recorre fila a fila
                 vector<string> vectorFilasIndividuales;
-                for (auto celda : fila)
+                for (auto celda : fila)   //Se accede a cada celda de la fila (fila-columna)
                         vectorFilasIndividuales.push_back(celda.to_string());
-
-                vectorHojaCompleta.push_back(vectorFilasIndividuales);
+                vectorHojaCompleta.push_back(vectorFilasIndividuales);    //Se guarda por [Fila][Columna]
         }
 
         return vectorHojaCompleta;
@@ -71,16 +68,12 @@ void quickSort(vector<Docente> &numeros, int limite_izq, int limite_der){
         int i = limite_izq;
         int j = limite_der;
         Docente aux;
-
-
         while(i<=j) {
                 while(numeros.at(i).getHolgura() < pivote)
                         i++;
                 while(numeros.at(j).getHolgura() > pivote)
                         j--;
-
                 if(i <= j) {
-
                         aux = numeros.at(i);
                         numeros.at(i) = numeros.at(j);
                         numeros.at(j) = aux;
@@ -88,11 +81,9 @@ void quickSort(vector<Docente> &numeros, int limite_izq, int limite_der){
                         j--;
                 }
         }
-
         if(limite_izq < j) {
                 quickSort(numeros, limite_izq, j);
         }
-
         if(i < limite_der) {
                 quickSort(numeros, i, limite_der);
         }
@@ -165,15 +156,15 @@ void escribirResultadosEnXlsxFinal(vector<Sala> vectorSala, vector<vector<vector
         xlnt::worksheet hojaActiva = salida.sheet_by_title(vectorSala.at(sala).getNombre());
         //Se escribe el horario dependiendo de lo que haya el vector de resultados
         hojaActiva.cell(xlnt::cell_reference(dia + 3, periodo + 2)).value(superCubo.at(sala).at(dia).at(periodo));
-        // if (superCubo.at(sala).at(dia).at(periodo)[0]!='*') {
-        //   cuentaTotal++;
-        //   if (superCubo.at(sala).at(dia).at(periodo)[0]=='I' && superCubo.at(sala).at(dia).at(periodo)[1]=='N' && superCubo.at(sala).at(dia).at(periodo)[2]=='F') {
-        //     contINF++;
-        //   }
-        //   else{
-        //     contNORMAL++;
-        //   }
-        // }
+        if (superCubo.at(sala).at(dia).at(periodo)[0]!='*') {
+          cuentaTotal++;
+          if (superCubo.at(sala).at(dia).at(periodo)[0]=='I' && superCubo.at(sala).at(dia).at(periodo)[1]=='N' && superCubo.at(sala).at(dia).at(periodo)[2]=='F') {
+            contINF++;
+          }
+          else{
+            contNORMAL++;
+          }
+        }
 
 
         borde_alineamiento_tam(hojaActiva,border,dia,periodo);
@@ -220,7 +211,21 @@ bool esLab(string sala){
         return false;
 }
 
-bool asignarAsignatura(vector<vector<vector<string> > > &superCubo, int salas, Docente profesor, string idRamo){
+int decisionBloquesJuntos(int bloques){
+  if (bloques/2==0) return 1; //Si la cantidad de bloques da 0, significa que solo hay un bloque de es ramo.
+  else{
+    if (bloques%2!=0) {   //Si el numero es impar, significa que es posible asignar 3 bloques y el resto en pares
+      int aleatorio=rand()%2;
+      if (aleatorio==0) return 2;   //Se decidira aleatoriamente si se deben enviar los 3 juntos, o solo de 2
+      else return 3;
+    }
+    else{
+      return 2;   //Si no hay 3 bloques, se enviaran dos bloques juntos
+    }
+  }
+}
+
+bool asignarAsignatura(vector<vector<vector<string> > > &superCubo, int salas, Docente profesor, string idRamo, int bloques){
   for(int dias = 0; dias < superCubo.at(salas).size(); dias++) {
     for(int periodos = 0; periodos < superCubo.at(salas).at(dias).size(); periodos++) {
       if(superCubo.at(salas).at(dias).at(periodos)[0] == '*' && profesor.estaDisponible(dias, periodos)) {
@@ -231,6 +236,13 @@ bool asignarAsignatura(vector<vector<vector<string> > > &superCubo, int salas, D
   }
   return false;
 }
+
+int obtenerNumMayor(int mayor, int numero, int posicion){   //Función que retorna el mayor entre 2 numeros
+  if (mayor>=10) mayor=mayor/10;  //Como el numero que se recibira puede ya haber pasado por esta funcion, se verifica que el numero que llegue sea menor a 10, si es mayor significa que el segundo digito es la posicion
+  if (numero>mayor) mayor=numero;   //Compara las variables mayor y numero, y si numero es mayor, este se vuelve la nueva variable mayor
+  return (mayor*10)+posicion;
+}
+
 //================================== FUNCIONES DOCENTES =====================================
 
 //Muestra por pantalla una lista de los profesores desde un vector
@@ -285,88 +297,64 @@ void cantidadAsignaturasPorProfesor(int argc, char *argv[]){
 
 }
 
-//Retorna un vector de la clase CURSO, el cual contiene todos los cursos de un profesor
-vector <Curso> VectorVectoresAsignatura(vector< vector<string> > vectorCursos, string id_docente){
-  vector <Curso> CursosxDocente;
-  //se itera las asignaturas que hay en el vector de vectores de asignaturas
-  for (int asignaturas = 1; asignaturas < vectorCursos.size(); asignaturas++) {
-    //verificacion si el id del profesor que esta relacionado en
-    //las asignaturas concuerda con el id del profesor
-    if(vectorCursos.at(asignaturas).at(2) == id_docente) {
-      string codigo = vectorCursos.at(asignaturas).at(0);
-      string nombre = vectorCursos.at(asignaturas).at(1);
-      string idDocente = vectorCursos.at(asignaturas).at(2);
-      int bloques_pedagogicos = stoi(vectorCursos.at(asignaturas).at(5));
-      int bloques= bloquesReales(bloques_pedagogicos);
-      Curso nuevoCurso(codigo, nombre, idDocente, bloques);
-      CursosxDocente.push_back(nuevoCurso);
-    }
+//Obtiene la disponibilidad total que se encuentra en el XLSX DOCENTE, convirtiendola en [PESTAÑA][FILA][COLUMNA]=[DÍA][PROFESOR][PERIODO]
+vector<vector<vector<string>>> obtenerVectorInfoDisponibilidad(xlnt::workbook xlsDocentes, int cantidad_hojas){
+  vector<vector<vector<string> > > vectorInfoDias; //Vector que contiene vector de vectores por día
+  for (int sheet = 0; sheet < cantidad_hojas; sheet++) {  //iteracion por pestañas en el xlsx
+          vector< vector<string> > vectorSheet = crearVectorVectoresIndex(xlsDocentes, sheet);     //obtencion de informacion de cada pestaña
+          vectorInfoDias.push_back(vectorSheet);
   }
-  return CursosxDocente;
+  return vectorInfoDias;
 }
+
+//Obtiene el vector de disponibilidad de un profesor en especifico y retorna la cantidad de veces que NO esta disponible, ademas se llena el vector de la disponibilidad diaria de cada docente
+int ObtenerPesoDisponibilidad(vector<vector<int>> &disponiblexDia, vector<vector<vector<string>>> vectorInfoDias, int profesores, int cantidad_hojas ){
+    int pesoDisponibilidad = 0;   //PesoDisponibilidad para la cuenta de "NO DISPONIBLE"
+    for (int dias = 0; dias < cantidad_hojas; dias++) {
+            int conjunto_mayor=0, conjunto_momentaneo=0, posicion_final=0, dispDiaria =0;    // conjunto_mayor para almacenar el grupo mayor de "DISPONIBLE" juntos, conjunto_momentaneo cuenta de "DISPONIBLE" juntos
+            vector<int> dia_x; //Vector que almacena la disponibilidad por día de un profesor
+            for(int col = 3; col < vectorInfoDias.at(dias).at(profesores).size(); col++) {    //Se itera por columnnas
+                    if(vectorInfoDias.at(dias).at(profesores).at(col)[0] == 'D') {
+                            conjunto_momentaneo++;    //Suma los bloques disponibles
+                            dia_x.push_back(1);
+                            conjunto_mayor= obtenerNumMayor(conjunto_mayor,conjunto_momentaneo, col-3);
+                            dispDiaria++;
+                    } else {
+                            conjunto_momentaneo=0;    //Cuando se encuentra un "NO DISPONIBLE" la sumatoria se reinicia.
+                            dia_x.push_back(0);
+                            pesoDisponibilidad++;
+                    }
+            }
+            dia_x.push_back(dispDiaria);
+            dia_x.push_back(conjunto_mayor);
+            disponiblexDia.push_back(dia_x);
+    }
+    return pesoDisponibilidad;
+  }
 
 //Retorna vector de Docentes con la info de todas las pestañas del xlsx
 vector<Docente> obtenerVectorInfoDocentes(char *argv[]){
-        vector<Docente> vectorInfoDocentes; //Vector a devolver
-        vector<vector<vector<string> > > vectorInfoDias; //Vector que contiene vector de vectores por día
-
-        xlnt::workbook xlsDocentes;
+        xlnt::workbook xlsDocentes, xlsCursos;
         xlsDocentes.load(argv[2]); //carga del xlsx
-
-        xlnt::workbook xlsCursos; //instancia de objeto que aloja el xlsx
         xlsCursos.load(argv[1]); //carga del xlsx
-
-        vector< vector<string> > CursosDocente = crearVectorVectoresIndex(xlsCursos, 0); //Vector de vectores de los cursos
-
         int cantidad_hojas= xlsDocentes.sheet_count();
-
-        //iteracion por pestañas en el xlsx
-        for (int sheet = 0; sheet < cantidad_hojas; sheet++) {
-                //obtencion de informacion de cada pestaña
-                vector< vector<string> > vectorSheet = crearVectorVectoresIndex(xlsDocentes, sheet);
-                vectorInfoDias.push_back(vectorSheet);
-        }
-
-        //Iteración por profesor
-        for (int profesores = 1; profesores < vectorInfoDias.at(0).size(); profesores++) {
-                vector<vector<int> > disponibleDia;
-                vector <Curso> asignaturas;
-
+        vector<Docente> vectorInfoDocentes; //Vector a devolver
+        vector< vector<string>> CursosDocente = crearVectorVectoresIndex(xlsCursos, 0); //Vector de vectores de los cursos
+        vector<vector<vector<string>>> vectorInfoDias= obtenerVectorInfoDisponibilidad(xlsDocentes,cantidad_hojas); //Vector que contiene vector de vectores por día cada pestaña día del XLSX
+        for (int profesores = 1; profesores < vectorInfoDias.at(0).size(); profesores++) {    //Iteración por profesor
+                vector<vector<int>> disponiblexDia;   //Vector que será rellenado con las disponibilidades diarias de cada profesor
                 string id = vectorInfoDias.at(0).at(profesores).at(0); //OJO, como la información de los profesores se repite en todas las hojas, se sca solo de la inicial.
                 string nombres =  vectorInfoDias.at(0).at(profesores).at(1);
                 string apellidos = vectorInfoDias.at(0).at(profesores).at(2);
-                int pesoDisponibilidad = 0;
-
-                //Se Itera por días
-                for (int dias = 0; dias < cantidad_hojas; dias++) {
-
-                        vector<int> dia_x; //Vector que almacena la disponibilidad por día de un profesor
-
-                        //Se itera por columnnas
-                        for(int col = 3; col < vectorInfoDias.at(dias).at(profesores).size(); col++) {
-                                if(vectorInfoDias.at(dias).at(profesores).at(col) == "DISPONIBLE") {
-                                        dia_x.push_back(1);
-                                } else {
-                                        dia_x.push_back(0);
-                                        pesoDisponibilidad++;
-                                }
-                        }
-                        disponibleDia.push_back(dia_x);
-                        dia_x.clear(); //se limpia vector auxiliar que guarda la disponibilidad del dia
-                }
-
-                asignaturas=VectorVectoresAsignatura(CursosDocente, id);
-
-                //despues de que se recopila todos los datos se crea un objecto de clase Docente
-                Docente nuevoProfesor(id, nombres, apellidos, disponibleDia, pesoDisponibilidad, 0,asignaturas);
-                //se guarda el objeto en vector que los contenga a todos
-                vectorInfoDocentes.push_back(nuevoProfesor);
-                //nuevoProfesor.imprimirDocente();
-
+                std::cout << "APELLIDOS: "<<apellidos << '\n';
+                int pesoDisponibilidad=ObtenerPesoDisponibilidad(disponiblexDia,vectorInfoDias,profesores,cantidad_hojas);  //variable que contabiliza los NO DISPONIBLES
+                vector <Curso> asignaturas=VectorVectoresAsignatura(CursosDocente, id);
+                Docente nuevoProfesor(id, nombres, apellidos, disponiblexDia, pesoDisponibilidad, 0,asignaturas);   //despues de que se recopila todos los datos se crea un objecto de clase Docente
+                nuevoProfesor.imprimirDocente();
+                disponiblexDia.clear();
+                vectorInfoDocentes.push_back(nuevoProfesor);    //se guarda el objeto en vector que los contenga a todos
         }
-
         return vectorInfoDocentes;
-
 }
 
 //Imprime vector de Docentes
@@ -386,16 +374,12 @@ void ordenarPorHolguraVectorDocente(vector<Docente> &vectorDocente){
                 //calcula disponibilidad restando 39 (7 bloques * 5 diasSemana + 4 bloques dia sabado)
                 //menos lo obtenido en el objeto docente ya calculado
                 int disponibilidadReal = 39-vectorDocente.at(i).getPesoDisponibilidad(); //39: disponibilidad todos los bloques en una semana
-
                 //Se busca lo que realmente se necesita en bloques para cada profesor
                 int disponibilidadEsperada = obtenerBloquesPorDocenteByCurso(vectorDocente.at(i).getAsignaturas());
-
-
                 int holgura = disponibilidadReal - disponibilidadEsperada;
                 vectorDocente.at(i).setHolgura(holgura);//Se cambia atributo Holgura en cada objeto por lo obtenido
         }
         quickSort(vectorDocente, 0, vectorDocente.size()-1); //se ordena ascendentemente por holgura
-
         // for(Docente profe : vectorDocente) { //Muestra por pantalla
         //         cout << profe.getNombre() << " " << profe.getApellido() << " /Holgura: " << profe.getHolgura() <<" Disponibilidad: "<<39- profe.getPesoDisponibilidad()<<endl;
         // }
@@ -413,6 +397,26 @@ Docente buscarDocenteByID(string id, vector<Docente> vector){
 }
 
 //================================== FUNCIONES CURSOS =====================================
+
+//Retorna un vector de la clase CURSO, el cual contiene todos los cursos de un profesor
+vector <Curso> VectorVectoresAsignatura(vector< vector<string> > vectorCursos, string id_docente){
+  vector <Curso> CursosxDocente;
+  //se itera las asignaturas que hay en el vector de vectores de asignaturas
+  for (int asignaturas = 1; asignaturas < vectorCursos.size(); asignaturas++) {
+    //verificacion si el id del profesor que esta relacionado en
+    //las asignaturas concuerda con el id del profesor
+    if(vectorCursos.at(asignaturas).at(2) == id_docente) {
+      string codigo = vectorCursos.at(asignaturas).at(0);
+      string nombre = vectorCursos.at(asignaturas).at(1);
+      string idDocente = vectorCursos.at(asignaturas).at(2);
+      int bloques_pedagogicos = stoi(vectorCursos.at(asignaturas).at(5));
+      int bloques= bloquesReales(bloques_pedagogicos);
+      Curso nuevoCurso(codigo, nombre, idDocente, bloques);
+      CursosxDocente.push_back(nuevoCurso);
+    }
+  }
+  return CursosxDocente;
+}
 
 //Conversion de horas pedagogicas a Bloques
 int bloquesReales(int bloques){
@@ -469,13 +473,10 @@ int obtenerBloquesPorDocenteByCurso(vector<Curso> vector){
 //Crea el archivo .xlsx de salida y coloca el nombre de cada pestaña segun las salas disponibles en Salas.xlsx
 vector<Sala> obtenerVectorInfoSalas(char *argv[]){
         vector<Sala> vectorInfoSala; //Vector a devolver
-
         xlnt::workbook xlsxSala;
         xlsxSala.load(argv[3]); //carga del xlsx
-
         //obtencion de lista de las salas
         vector< vector<string> > vectorSala = crearVectorVectoresIndex(xlsxSala, 0);
-
         //iteracion por sala
         for (int sala = 1; sala < vectorSala.size(); sala++)
         {
@@ -489,7 +490,6 @@ vector<Sala> obtenerVectorInfoSalas(char *argv[]){
         }
         return vectorInfoSala;
 }
-
 
 //Retorna vector de Sala con la info del xlsx
 void crearArchivoSalidaConNombreSheet(vector<Sala> vectorSala){

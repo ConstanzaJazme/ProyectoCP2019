@@ -44,7 +44,10 @@ bool esRamoInformatica(string);
 //Compueba si una sala es LAB
 bool esLab(string);
 
-bool asignarAsignatura(vector<vector<vector<string> > > &, int , Docente, string );
+bool asignarAsignatura(vector<vector<vector<string> > > &, int , Docente, string, int );
+
+//Función que retorna el mayor entre 2 numeros y la ultima posicion que tiene en un arreglo (en el formato primer digito = tamaño conjunto segundo digito posicion)
+int obtenerNumMayor(int, int, int);
 //================================== FUNCIONES DOCENTES =====================================
 
 //Muestra por pantalla una lista de los profesores desde un vector
@@ -52,6 +55,12 @@ void imprimeProfesores(vector<vector<string>> profes);
 
 //Cuenta la cantidad de asignarutas de cada profesor y las muestra por pantalla
 void cantidadAsignaturasPorProfesor(int argc, char *argv[]);
+
+//Obtiene la disponibilidad total que se encuentra en el XLSX DOCENTE, convirtiendola en [PESTAÑA][FILA][COLUMNA]=[DÍA][PROFESOR][PERIODO]
+vector<vector<vector<string>>> obtenerVectorInfoDisponibilidad(xlnt::workbook, int );
+
+//Obtiene el vector de disponibilidad de un profesor en especifico y retorna la cantidad de veces que NO esta disponible
+int ObtenerPesoDisponibilidad(vector<vector<int>> &,vector<vector<vector<string>>>, int, int);
 
 //Retorna vector de Docentes con la info de todas las pestañas del xlsx
 vector<Docente> obtenerVectorInfoDocentes(char *argv[]);
@@ -66,6 +75,8 @@ void ordenarPorHolguraVectorDocente(std::vector<Docente> &);
 Docente buscarDocenteByID(std::string, std::vector<Docente>);
 
 //================================== FUNCIONES CURSOS =====================================
+
+vector <Curso> VectorVectoresAsignatura(vector< vector<string>>, string);
 
 int bloquesReales(int);
 

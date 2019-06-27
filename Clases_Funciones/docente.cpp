@@ -82,15 +82,15 @@ vector<Curso> Docente::getAsignaturas(){
 
 void Docente::imprimirDocente(){
         vector<string> Dias = {"Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado"};
-
         cout << "Profesor: " << this->ID << " - " << this->Nombres << " " << this->Apellidos << endl;
-
+        int pos=0;
         for(int dia = 0; dia < this->Disponibilidad.size(); dia++) {
+                pos= this->Disponibilidad.at(dia).size();
                 cout << Dias[dia] << ": ";
-                for(int disp = 0; disp < this->Disponibilidad.at(dia).size(); disp++) {
+                for(int disp = 0; disp < this->Disponibilidad.at(dia).size()-2; disp++) {
                         cout << this->Disponibilidad.at(dia).at(disp) << " ";
                 }
-                cout << endl;
+                std::cout << "Conjunto mas largo "<<  this->Disponibilidad.at(dia).at(pos-1)/10 << " de un total de "<<  this->Disponibilidad.at(dia).at(pos-2)<<  '\n';
         }
 
 }

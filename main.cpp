@@ -17,11 +17,9 @@ int main(int argc, char *argv[])
         vector<Docente> vectorDocente = obtenerVectorInfoDocentes(argv);
         //Obtiene la información de las salas, almacenando el nombre de las salas en la clase SALA
         vector<Sala> vectorSala = obtenerVectorInfoSalas(argv);
-        // //Obtiene la información de los cursos, almacenando codigo, nombre y bloques en la clase CURSO
+        // Obtiene la información de los cursos, almacenando codigo, nombre y bloques en la clase CURSO
         // vector<Curso> vectorCurso = obtenerVectorInfoCursos(argv);
-
         ordenarPorHolguraVectorDocente(vectorDocente);
-
         vector<vector<vector<string> > > superCubo = crearSuperCubo(vectorSala);
         int ramos = 0;
         for(int docente = 0; docente < vectorDocente.size(); docente++) { //Se recorren todos los profesores
@@ -38,25 +36,17 @@ int main(int argc, char *argv[])
                                 bool esLaboratorio = esLab(vectorSala.at(salaAleatoria).getNombre()); //Se verifica si la sala es de LAB
 
                                 if(!ramoInformatica && !esLaboratorio) { //Si el ramo no de informatica ni la sala es de laboratorio
-                                        asignar=asignarAsignatura(superCubo,salaAleatoria,profesor,idRamo);
+                                        asignar=asignarAsignatura(superCubo,salaAleatoria,profesor,idRamo,bloques);
                                         if (asignar) bloques--;
                                 }
                                 if(ramoInformatica && esLaboratorio) {
-                                        asignar=asignarAsignatura(superCubo,salaAleatoria,profesor,idRamo);
+                                        asignar=asignarAsignatura(superCubo,salaAleatoria,profesor,idRamo, bloques);
                                         if (asignar) bloques--;
                                 }
-
                         }
-
                 }
         }
         // cout << "Ramos Totales: " << ramos << endl;
         escribirResultadosEnXlsxFinal(vectorSala, superCubo);
-
-
-
-
-
-
         return 0;
 }
