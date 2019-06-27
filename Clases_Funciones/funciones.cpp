@@ -141,7 +141,7 @@ void borde_alineamiento_tam(xlnt::worksheet hoja, xlnt::border border, int dia, 
 
 //Escribe en el archivo final el resultado de hacer el horario
 void escribirResultadosEnXlsxFinal(vector<Sala> vectorSala, vector<vector<vector<string> > > superCubo){
-<<<<<<< HEAD
+
   crearArchivoSalidaConNombreSheet(vectorSala); //Se crea archivo de salida
   xlnt::border border;
   xlnt::workbook salida;
@@ -176,26 +176,25 @@ void escribirResultadosEnXlsxFinal(vector<Sala> vectorSala, vector<vector<vector
   std::cout << "Cuenta total: "<<cuentaTotal << '\n';
   std::cout << "Cuenta de INF: " << contINF<< '\n';
   std::cout << "Cuenta de NO INF: " << contNORMAL<< '\n';
-=======
-        crearArchivoSalidaConNombreSheet(vectorSala); //Se crea archivo de salida
-        xlnt::border border;
-        xlnt::workbook salida;
-        border=estilo_borde(border);
-        salida.load("salida.xlsx"); //Se carga el archivo de salida de resultados
-        for(int sala = 0; sala < superCubo.size(); sala++) {
-                for(int dia = 0; dia < superCubo.at(sala).size(); dia++) {
-                        for(int periodo = 0; periodo < superCubo.at(sala).at(dia).size(); periodo++) {
-                                //Se selecciona la hoja correspondiente
-                                xlnt::worksheet hojaActiva = salida.sheet_by_title(vectorSala.at(sala).getNombre());
-                                //Se escribe el horario dependiendo de lo que haya el vector de resultados
-                                hojaActiva.cell(xlnt::cell_reference(dia + 3, periodo + 2)).value(superCubo.at(sala).at(dia).at(periodo));
 
-                                borde_alineamiento_tam(hojaActiva,border,dia,periodo);
-                        }
-                }
-        }
-        salida.save("salida.xlsx"); //Se guardan resultados
->>>>>>> a19a0b5298a0972a7bc1703b28707a577a5ab3f2
+//         crearArchivoSalidaConNombreSheet(vectorSala); //Se crea archivo de salida
+//         xlnt::border border;
+//         xlnt::workbook salida;
+//         border=estilo_borde(border);
+//         salida.load("salida.xlsx"); //Se carga el archivo de salida de resultados
+//         for(int sala = 0; sala < superCubo.size(); sala++) {
+//                 for(int dia = 0; dia < superCubo.at(sala).size(); dia++) {
+//                         for(int periodo = 0; periodo < superCubo.at(sala).at(dia).size(); periodo++) {
+//                                 //Se selecciona la hoja correspondiente
+//                                 xlnt::worksheet hojaActiva = salida.sheet_by_title(vectorSala.at(sala).getNombre());
+//                                 //Se escribe el horario dependiendo de lo que haya el vector de resultados
+//                                 hojaActiva.cell(xlnt::cell_reference(dia + 3, periodo + 2)).value(superCubo.at(sala).at(dia).at(periodo));
+//
+//                                 borde_alineamiento_tam(hojaActiva,border,dia,periodo);
+//                         }
+//                 }
+//         }
+//         salida.save("salida.xlsx"); //Se guardan resultados
 }
 
 //Funcion que inicializa un SuperCubo, el cual se recorre por sala,dia,periodo y representa el Excel de salida
@@ -232,7 +231,7 @@ bool esLab(string sala){
         return false;
 }
 
-<<<<<<< HEAD
+
 int decisionBloquesJuntos(int bloques){
   if (bloques/2==0) return 1; //Si la cantidad de bloques da 0, significa que solo hay un bloque de es ramo.
   else{
@@ -247,14 +246,6 @@ int decisionBloquesJuntos(int bloques){
   }
 }
 
-bool asignarAsignatura(vector<vector<vector<string> > > &superCubo, int salas, Docente profesor, string idRamo, int bloques){
-  for(int dias = 0; dias < superCubo.at(salas).size(); dias++) {
-    for(int periodos = 0; periodos < superCubo.at(salas).at(dias).size(); periodos++) {
-      if(superCubo.at(salas).at(dias).at(periodos)[0] == '*' && profesor.estaDisponible(dias, periodos)) {
-        superCubo.at(salas).at(dias).at(periodos) = idRamo + " - " + profesor.getID();
-=======
-
-
 bool repeticionRamoSalaDistinta(int salaAleatoria, string ramo, int dia, int periodo, string profesor, vector<vector<vector<string> > > superCubo){
         string ramoProfesor = ramo + " - " + profesor;
         for(int sala = 0; sala < superCubo.size(); sala++) {
@@ -263,16 +254,16 @@ bool repeticionRamoSalaDistinta(int salaAleatoria, string ramo, int dia, int per
                         return false;
                 }
         }
->>>>>>> a19a0b5298a0972a7bc1703b28707a577a5ab3f2
         return true;
 }
 
-<<<<<<< HEAD
+
 int obtenerNumMayor(int mayor, int numero, int posicion){   //Función que retorna el mayor entre 2 numeros
   if (mayor>=10) mayor=mayor/10;  //Como el numero que se recibira puede ya haber pasado por esta funcion, se verifica que el numero que llegue sea menor a 10, si es mayor significa que el segundo digito es la posicion
   if (numero>mayor) mayor=numero;   //Compara las variables mayor y numero, y si numero es mayor, este se vuelve la nueva variable mayor
   return (mayor*10)+posicion;
-=======
+}
+
 bool asignarAsignatura(vector<vector<vector<string> > > &superCubo, int salas, Docente &profesor, string idRamo){
         for(int dia = 0; dia < superCubo.at(salas).size(); dia++) {
                 for(int periodo = 0; periodo < superCubo.at(salas).at(dia).size(); periodo++) {
@@ -284,7 +275,6 @@ bool asignarAsignatura(vector<vector<vector<string> > > &superCubo, int salas, D
                 }
         }
         return false;
->>>>>>> a19a0b5298a0972a7bc1703b28707a577a5ab3f2
 }
 
 //================================== FUNCIONES DOCENTES =====================================
@@ -341,7 +331,6 @@ void cantidadAsignaturasPorProfesor(int argc, char *argv[]){
 
 }
 
-<<<<<<< HEAD
 //Obtiene la disponibilidad total que se encuentra en el XLSX DOCENTE, convirtiendola en [PESTAÑA][FILA][COLUMNA]=[DÍA][PROFESOR][PERIODO]
 vector<vector<vector<string>>> obtenerVectorInfoDisponibilidad(xlnt::workbook xlsDocentes, int cantidad_hojas){
   vector<vector<vector<string> > > vectorInfoDias; //Vector que contiene vector de vectores por día
@@ -350,27 +339,8 @@ vector<vector<vector<string>>> obtenerVectorInfoDisponibilidad(xlnt::workbook xl
           vectorInfoDias.push_back(vectorSheet);
   }
   return vectorInfoDias;
-=======
-//Retorna un vector de la clase CURSO, el cual contiene todos los cursos de un profesor
-vector <Curso> VectorVectoresAsignatura(vector< vector<string> > vectorCursos, string id_docente){
-        vector <Curso> CursosxDocente;
-        //se itera las asignaturas que hay en el vector de vectores de asignaturas
-        for (int asignaturas = 1; asignaturas < vectorCursos.size(); asignaturas++) {
-                //verificacion si el id del profesor que esta relacionado en
-                //las asignaturas concuerda con el id del profesor
-                if(vectorCursos.at(asignaturas).at(2) == id_docente) {
-                        string codigo = vectorCursos.at(asignaturas).at(0);
-                        string nombre = vectorCursos.at(asignaturas).at(1);
-                        string idDocente = vectorCursos.at(asignaturas).at(2);
-                        int bloques_pedagogicos = stoi(vectorCursos.at(asignaturas).at(5));
-                        int bloques= bloquesReales(bloques_pedagogicos);
-                        Curso nuevoCurso(codigo, nombre, idDocente, bloques);
-                        CursosxDocente.push_back(nuevoCurso);
-                }
-        }
-        return CursosxDocente;
->>>>>>> a19a0b5298a0972a7bc1703b28707a577a5ab3f2
 }
+
 
 //Obtiene el vector de disponibilidad de un profesor en especifico y retorna la cantidad de veces que NO esta disponible, ademas se llena el vector de la disponibilidad diaria de cada docente
 int ObtenerPesoDisponibilidad(vector<vector<int>> &disponiblexDia, vector<vector<vector<string>>> vectorInfoDias, int profesores, int cantidad_hojas ){
@@ -465,23 +435,24 @@ Docente buscarDocenteByID(string id, vector<Docente> vector){
 
 //Retorna un vector de la clase CURSO, el cual contiene todos los cursos de un profesor
 vector <Curso> VectorVectoresAsignatura(vector< vector<string> > vectorCursos, string id_docente){
-  vector <Curso> CursosxDocente;
-  //se itera las asignaturas que hay en el vector de vectores de asignaturas
-  for (int asignaturas = 1; asignaturas < vectorCursos.size(); asignaturas++) {
-    //verificacion si el id del profesor que esta relacionado en
-    //las asignaturas concuerda con el id del profesor
-    if(vectorCursos.at(asignaturas).at(2) == id_docente) {
-      string codigo = vectorCursos.at(asignaturas).at(0);
-      string nombre = vectorCursos.at(asignaturas).at(1);
-      string idDocente = vectorCursos.at(asignaturas).at(2);
-      int bloques_pedagogicos = stoi(vectorCursos.at(asignaturas).at(5));
-      int bloques= bloquesReales(bloques_pedagogicos);
-      Curso nuevoCurso(codigo, nombre, idDocente, bloques);
-      CursosxDocente.push_back(nuevoCurso);
-    }
-  }
-  return CursosxDocente;
+        vector <Curso> CursosxDocente;
+        //se itera las asignaturas que hay en el vector de vectores de asignaturas
+        for (int asignaturas = 1; asignaturas < vectorCursos.size(); asignaturas++) {
+                //verificacion si el id del profesor que esta relacionado en
+                //las asignaturas concuerda con el id del profesor
+                if(vectorCursos.at(asignaturas).at(2) == id_docente) {
+                        string codigo = vectorCursos.at(asignaturas).at(0);
+                        string nombre = vectorCursos.at(asignaturas).at(1);
+                        string idDocente = vectorCursos.at(asignaturas).at(2);
+                        int bloques_pedagogicos = stoi(vectorCursos.at(asignaturas).at(5));
+                        int bloques= bloquesReales(bloques_pedagogicos);
+                        Curso nuevoCurso(codigo, nombre, idDocente, bloques);
+                        CursosxDocente.push_back(nuevoCurso);
+                }
+        }
+        return CursosxDocente;
 }
+
 
 //Conversion de horas pedagogicas a Bloques
 int bloquesReales(int bloques){

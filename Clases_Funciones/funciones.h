@@ -44,14 +44,11 @@ bool esRamoInformatica(string);
 //Compueba si una sala es LAB
 bool esLab(string);
 
-<<<<<<< HEAD
-bool asignarAsignatura(vector<vector<vector<string> > > &, int , Docente, string, int );
 
 //Función que retorna el mayor entre 2 numeros y la ultima posicion que tiene en un arreglo (en el formato primer digito = tamaño conjunto segundo digito posicion)
 int obtenerNumMayor(int, int, int);
-=======
+
 bool asignarAsignatura(vector<vector<vector<string> > > &, int , Docente &, string );
->>>>>>> a19a0b5298a0972a7bc1703b28707a577a5ab3f2
 //================================== FUNCIONES DOCENTES =====================================
 
 //Muestra por pantalla una lista de los profesores desde un vector
