@@ -142,59 +142,29 @@ void borde_alineamiento_tam(xlnt::worksheet hoja, xlnt::border border, int dia, 
 //Escribe en el archivo final el resultado de hacer el horario
 void escribirResultadosEnXlsxFinal(vector<Sala> vectorSala, vector<vector<vector<string> > > superCubo){
 
-  crearArchivoSalidaConNombreSheet(vectorSala); //Se crea archivo de salida
-  xlnt::border border;
-  xlnt::workbook salida;
-  border=estilo_borde(border);
-  salida.load("salida.xlsx"); //Se carga el archivo de salida de resultados
-  int contINF=0;
-  int contNORMAL=0;
-  int cuentaTotal=0;
-  for(int sala = 0; sala < superCubo.size(); sala++) {
-    for(int dia = 0; dia < superCubo.at(sala).size(); dia++) {
-      for(int periodo = 0; periodo < superCubo.at(sala).at(dia).size(); periodo++) {
-        //Se selecciona la hoja correspondiente
-        xlnt::worksheet hojaActiva = salida.sheet_by_title(vectorSala.at(sala).getNombre());
-        //Se escribe el horario dependiendo de lo que haya el vector de resultados
-        hojaActiva.cell(xlnt::cell_reference(dia + 3, periodo + 2)).value(superCubo.at(sala).at(dia).at(periodo));
-        if (superCubo.at(sala).at(dia).at(periodo)[0]!='*') {
-          cuentaTotal++;
-          if (superCubo.at(sala).at(dia).at(periodo)[0]=='I' && superCubo.at(sala).at(dia).at(periodo)[1]=='N' && superCubo.at(sala).at(dia).at(periodo)[2]=='F') {
-            contINF++;
-          }
-          else{
-            contNORMAL++;
-          }
+        crearArchivoSalidaConNombreSheet(vectorSala); //Se crea archivo de salida
+        xlnt::border border;
+        xlnt::workbook salida;
+        border=estilo_borde(border);
+        salida.load("salida.xlsx"); //Se carga el archivo de salida de resultados
+        int contINF=0;
+        int contNORMAL=0;
+        int cuentaTotal=0;
+        for(int sala = 0; sala < superCubo.size(); sala++) {
+                for(int dia = 0; dia < superCubo.at(sala).size(); dia++) {
+                        for(int periodo = 0; periodo < superCubo.at(sala).at(dia).size(); periodo++) {
+                                //Se selecciona la hoja correspondiente
+                                xlnt::worksheet hojaActiva = salida.sheet_by_title(vectorSala.at(sala).getNombre());
+                                //Se escribe el horario dependiendo de lo que haya el vector de resultados
+                                hojaActiva.cell(xlnt::cell_reference(dia + 3, periodo + 2)).value(superCubo.at(sala).at(dia).at(periodo));
+
+
+
+                                borde_alineamiento_tam(hojaActiva,border,dia,periodo);
+                        }
+                }
         }
-
-
-        borde_alineamiento_tam(hojaActiva,border,dia,periodo);
-      }
-    }
-  }
-  salida.save("salida.xlsx"); //Se guardan resultados
-  std::cout << "Cuenta total: "<<cuentaTotal << '\n';
-  std::cout << "Cuenta de INF: " << contINF<< '\n';
-  std::cout << "Cuenta de NO INF: " << contNORMAL<< '\n';
-
-//         crearArchivoSalidaConNombreSheet(vectorSala); //Se crea archivo de salida
-//         xlnt::border border;
-//         xlnt::workbook salida;
-//         border=estilo_borde(border);
-//         salida.load("salida.xlsx"); //Se carga el archivo de salida de resultados
-//         for(int sala = 0; sala < superCubo.size(); sala++) {
-//                 for(int dia = 0; dia < superCubo.at(sala).size(); dia++) {
-//                         for(int periodo = 0; periodo < superCubo.at(sala).at(dia).size(); periodo++) {
-//                                 //Se selecciona la hoja correspondiente
-//                                 xlnt::worksheet hojaActiva = salida.sheet_by_title(vectorSala.at(sala).getNombre());
-//                                 //Se escribe el horario dependiendo de lo que haya el vector de resultados
-//                                 hojaActiva.cell(xlnt::cell_reference(dia + 3, periodo + 2)).value(superCubo.at(sala).at(dia).at(periodo));
-//
-//                                 borde_alineamiento_tam(hojaActiva,border,dia,periodo);
-//                         }
-//                 }
-//         }
-//         salida.save("salida.xlsx"); //Se guardan resultados
+        salida.save("salida.xlsx"); //Se guardan resultados
 }
 
 //Funcion que inicializa un SuperCubo, el cual se recorre por sala,dia,periodo y representa el Excel de salida
@@ -233,17 +203,17 @@ bool esLab(string sala){
 
 
 int decisionBloquesJuntos(int bloques){
-  if (bloques/2==0) return 1; //Si la cantidad de bloques da 0, significa que solo hay un bloque de es ramo.
-  else{
-    if (bloques%2!=0) {   //Si el numero es impar, significa que es posible asignar 3 bloques y el resto en pares
-      int aleatorio=rand()%2;
-      if (aleatorio==0) return 2;   //Se decidira aleatoriamente si se deben enviar los 3 juntos, o solo de 2
-      else return 3;
-    }
-    else{
-      return 2;   //Si no hay 3 bloques, se enviaran dos bloques juntos
-    }
-  }
+        if (bloques/2==0) return 1; //Si la cantidad de bloques da 0, significa que solo hay un bloque de es ramo.
+        else{
+                if (bloques%2!=0) { //Si el numero es impar, significa que es posible asignar 3 bloques y el resto en pares
+                        int aleatorio=rand()%2;
+                        if (aleatorio==0) return 2; //Se decidira aleatoriamente si se deben enviar los 3 juntos, o solo de 2
+                        else return 3;
+                }
+                else{
+                        return 2; //Si no hay 3 bloques, se enviaran dos bloques juntos
+                }
+        }
 }
 
 bool repeticionRamoSalaDistinta(int salaAleatoria, string ramo, int dia, int periodo, string profesor, vector<vector<vector<string> > > superCubo){
@@ -259,9 +229,9 @@ bool repeticionRamoSalaDistinta(int salaAleatoria, string ramo, int dia, int per
 
 
 int obtenerNumMayor(int mayor, int numero, int posicion){   //Función que retorna el mayor entre 2 numeros
-  if (mayor>=10) mayor=mayor/10;  //Como el numero que se recibira puede ya haber pasado por esta funcion, se verifica que el numero que llegue sea menor a 10, si es mayor significa que el segundo digito es la posicion
-  if (numero>mayor) mayor=numero;   //Compara las variables mayor y numero, y si numero es mayor, este se vuelve la nueva variable mayor
-  return (mayor*10)+posicion;
+        if (mayor>=10) mayor=mayor/10; //Como el numero que se recibira puede ya haber pasado por esta funcion, se verifica que el numero que llegue sea menor a 10, si es mayor significa que el segundo digito es la posicion
+        if (numero>mayor) mayor=numero; //Compara las variables mayor y numero, y si numero es mayor, este se vuelve la nueva variable mayor
+        return (mayor*10)+posicion;
 }
 
 bool asignarAsignatura(vector<vector<vector<string> > > &superCubo, int salas, Docente &profesor, string idRamo){
@@ -332,40 +302,40 @@ void cantidadAsignaturasPorProfesor(int argc, char *argv[]){
 }
 
 //Obtiene la disponibilidad total que se encuentra en el XLSX DOCENTE, convirtiendola en [PESTAÑA][FILA][COLUMNA]=[DÍA][PROFESOR][PERIODO]
-vector<vector<vector<string>>> obtenerVectorInfoDisponibilidad(xlnt::workbook xlsDocentes, int cantidad_hojas){
-  vector<vector<vector<string> > > vectorInfoDias; //Vector que contiene vector de vectores por día
-  for (int sheet = 0; sheet < cantidad_hojas; sheet++) {  //iteracion por pestañas en el xlsx
-          vector< vector<string> > vectorSheet = crearVectorVectoresIndex(xlsDocentes, sheet);     //obtencion de informacion de cada pestaña
-          vectorInfoDias.push_back(vectorSheet);
-  }
-  return vectorInfoDias;
+vector<vector<vector<string> > > obtenerVectorInfoDisponibilidad(xlnt::workbook xlsDocentes, int cantidad_hojas){
+        vector<vector<vector<string> > > vectorInfoDias; //Vector que contiene vector de vectores por día
+        for (int sheet = 0; sheet < cantidad_hojas; sheet++) { //iteracion por pestañas en el xlsx
+                vector< vector<string> > vectorSheet = crearVectorVectoresIndex(xlsDocentes, sheet); //obtencion de informacion de cada pestaña
+                vectorInfoDias.push_back(vectorSheet);
+        }
+        return vectorInfoDias;
 }
 
 
 //Obtiene el vector de disponibilidad de un profesor en especifico y retorna la cantidad de veces que NO esta disponible, ademas se llena el vector de la disponibilidad diaria de cada docente
-int ObtenerPesoDisponibilidad(vector<vector<int>> &disponiblexDia, vector<vector<vector<string>>> vectorInfoDias, int profesores, int cantidad_hojas ){
-    int pesoDisponibilidad = 0;   //PesoDisponibilidad para la cuenta de "NO DISPONIBLE"
-    for (int dias = 0; dias < cantidad_hojas; dias++) {
-            int conjunto_mayor=0, conjunto_momentaneo=0, posicion_final=0, dispDiaria =0;    // conjunto_mayor para almacenar el grupo mayor de "DISPONIBLE" juntos, conjunto_momentaneo cuenta de "DISPONIBLE" juntos
-            vector<int> dia_x; //Vector que almacena la disponibilidad por día de un profesor
-            for(int col = 3; col < vectorInfoDias.at(dias).at(profesores).size(); col++) {    //Se itera por columnnas
-                    if(vectorInfoDias.at(dias).at(profesores).at(col)[0] == 'D') {
-                            conjunto_momentaneo++;    //Suma los bloques disponibles
-                            dia_x.push_back(1);
-                            conjunto_mayor= obtenerNumMayor(conjunto_mayor,conjunto_momentaneo, col-3);
-                            dispDiaria++;
-                    } else {
-                            conjunto_momentaneo=0;    //Cuando se encuentra un "NO DISPONIBLE" la sumatoria se reinicia.
-                            dia_x.push_back(0);
-                            pesoDisponibilidad++;
-                    }
-            }
-            dia_x.push_back(dispDiaria);
-            dia_x.push_back(conjunto_mayor);
-            disponiblexDia.push_back(dia_x);
-    }
-    return pesoDisponibilidad;
-  }
+int ObtenerPesoDisponibilidad(vector<vector<int> > &disponiblexDia, vector<vector<vector<string> > > vectorInfoDias, int profesores, int cantidad_hojas ){
+        int pesoDisponibilidad = 0; //PesoDisponibilidad para la cuenta de "NO DISPONIBLE"
+        for (int dias = 0; dias < cantidad_hojas; dias++) {
+                int conjunto_mayor=0, conjunto_momentaneo=0, posicion_final=0, dispDiaria =0; // conjunto_mayor para almacenar el grupo mayor de "DISPONIBLE" juntos, conjunto_momentaneo cuenta de "DISPONIBLE" juntos
+                vector<int> dia_x; //Vector que almacena la disponibilidad por día de un profesor
+                for(int col = 3; col < vectorInfoDias.at(dias).at(profesores).size(); col++) { //Se itera por columnnas
+                        if(vectorInfoDias.at(dias).at(profesores).at(col)[0] == 'D') {
+                                conjunto_momentaneo++; //Suma los bloques disponibles
+                                dia_x.push_back(1);
+                                conjunto_mayor= obtenerNumMayor(conjunto_mayor,conjunto_momentaneo, col-3);
+                                dispDiaria++;
+                        } else {
+                                conjunto_momentaneo=0; //Cuando se encuentra un "NO DISPONIBLE" la sumatoria se reinicia.
+                                dia_x.push_back(0);
+                                pesoDisponibilidad++;
+                        }
+                }
+                dia_x.push_back(dispDiaria);
+                dia_x.push_back(conjunto_mayor);
+                disponiblexDia.push_back(dia_x);
+        }
+        return pesoDisponibilidad;
+}
 
 //Retorna vector de Docentes con la info de todas las pestañas del xlsx
 vector<Docente> obtenerVectorInfoDocentes(char *argv[]){
@@ -374,10 +344,10 @@ vector<Docente> obtenerVectorInfoDocentes(char *argv[]){
         xlsCursos.load(argv[1]); //carga del xlsx
         int cantidad_hojas= xlsDocentes.sheet_count();
         vector<Docente> vectorInfoDocentes; //Vector a devolver
-        vector< vector<string>> CursosDocente = crearVectorVectoresIndex(xlsCursos, 0); //Vector de vectores de los cursos
-        vector<vector<vector<string>>> vectorInfoDias= obtenerVectorInfoDisponibilidad(xlsDocentes,cantidad_hojas); //Vector que contiene vector de vectores por día cada pestaña día del XLSX
+        vector< vector<string> > CursosDocente = crearVectorVectoresIndex(xlsCursos, 0); //Vector de vectores de los cursos
+        vector<vector<vector<string> > > vectorInfoDias= obtenerVectorInfoDisponibilidad(xlsDocentes,cantidad_hojas); //Vector que contiene vector de vectores por día cada pestaña día del XLSX
         for (int profesores = 1; profesores < vectorInfoDias.at(0).size(); profesores++) {    //Iteración por profesor
-                vector<vector<int>> disponiblexDia;   //Vector que será rellenado con las disponibilidades diarias de cada profesor
+                vector<vector<int> > disponiblexDia;   //Vector que será rellenado con las disponibilidades diarias de cada profesor
                 string id = vectorInfoDias.at(0).at(profesores).at(0); //OJO, como la información de los profesores se repite en todas las hojas, se sca solo de la inicial.
                 string nombres =  vectorInfoDias.at(0).at(profesores).at(1);
                 string apellidos = vectorInfoDias.at(0).at(profesores).at(2);
