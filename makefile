@@ -3,6 +3,10 @@
 CXX = g++
 CXXFLAGS = -std=c++14
 
+# CXXMPI = mpic++
+# CXXRMPI = mpirun
+# CXXFLAGSMPI = -std=c++14 --oversubscribe
+
 FUENTE = main.cpp
 NOMBRE = tarea.out
 XLSX = ArchivosXLSX/Cursos.xlsx ArchivosXLSX/Docentes.xlsx ArchivosXLSX/Salas.xlsx
@@ -20,8 +24,15 @@ tarea: $(FUENTE) $(CLASES) $(FUNCIONES)
 	clear
 	./$(NOMBRE) $(XLSX)
 
+# tareaMPI: $(FUENTE) $(CLASES) $(FUNCIONES)
+# 		$(CXXMPI) $(FUENTE) -o $(NOMBRE) $(CLASES) $(FUNCIONES) $(CXXFLAGS) $(LIB)
+# 		clear
+# 		$(CXXRMPI)  $(CXXFLAGSMPI) -np $(shell bash -c 'read  -p "Cantidad -np: " pwd; echo $$pwd') $(NOMBRE) $(XLSX)
+
 ejecutar:
 	./$(NOMBRE) $(XLSX)
 
 clear:
 	rm $(NOMBRE)
+
+# .DEFAULT_GOAL := tareaMPI
