@@ -48,7 +48,7 @@ bool esLab(string);
 //Función que retorna el mayor entre 2 numeros y la ultima posicion que tiene en un arreglo (en el formato primer digito = tamaño conjunto segundo digito posicion)
 int obtenerNumMayor(int, int, int);
 
-bool asignarAsignatura(vector<vector<vector<string> > > &, int , Docente &, string );
+void asignarAsignatura(vector<vector<vector<string> > > &, int , Docente &, int, int);
 //================================== FUNCIONES DOCENTES =====================================
 
 //Muestra por pantalla una lista de los profesores desde un vector
@@ -97,6 +97,9 @@ void crearArchivoSalidaConNombreSheet(std::vector<Sala>);
 
 //Retorna vector de Sala con la info del xlsx
 vector<Sala> obtenerVectorInfoSalas(char *argv[]);
+
+int decisionBloquesJuntos(int);   //Se toma la decision de cuantos bloques dejar juntos
+
 
 
 #endif // FUNCIONES_H_INCLUDED

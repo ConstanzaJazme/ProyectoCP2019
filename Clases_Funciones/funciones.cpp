@@ -233,7 +233,7 @@ bool esLab(string sala){
 
 
 int decisionBloquesJuntos(int bloques){
-  if (bloques/2==0) return 1; //Si la cantidad de bloques da 0, significa que solo hay un bloque de es ramo.
+  if (bloques/2==0) return 1; //Si la cantidad de bloques da 0, significa que solo hay un bloque de ese ramo.
   else{
     if (bloques%2!=0) {   //Si el numero es impar, significa que es posible asignar 3 bloques y el resto en pares
       int aleatorio=rand()%2;
@@ -257,6 +257,18 @@ bool repeticionRamoSalaDistinta(int salaAleatoria, string ramo, int dia, int per
         return true;
 }
 
+bool disponibilidadSuperCubo(int salaAleatoria, int dia, int periodo, vector<vector<vector<string> > > superCubo, int bloques){
+  std::cout << "entre con  " <<dia<<" "<< periodo<<" " <<bloques << '\n';
+  for (int i= periodo; i<periodo+bloques;i++){
+    if(superCubo.at(salaAleatoria).at(dia).at(i)[0] != '*'){
+      std::cout << "SIN DISPONIBILIDAD" << '\n';
+
+      return false;
+    }
+  }
+  std::cout << "DISPONIBLE" << '\n';
+  return true;
+}
 
 int obtenerNumMayor(int mayor, int numero, int posicion){   //Función que retorna el mayor entre 2 numeros
   if (mayor>=10) mayor=mayor/10;  //Como el numero que se recibira puede ya haber pasado por esta funcion, se verifica que el numero que llegue sea menor a 10, si es mayor significa que el segundo digito es la posicion
@@ -264,17 +276,116 @@ int obtenerNumMayor(int mayor, int numero, int posicion){   //Función que retor
   return (mayor*10)+posicion;
 }
 
-bool asignarAsignatura(vector<vector<vector<string> > > &superCubo, int salas, Docente &profesor, string idRamo){
-        for(int dia = 0; dia < superCubo.at(salas).size(); dia++) {
-                for(int periodo = 0; periodo < superCubo.at(salas).at(dia).size(); periodo++) {
-                        if(superCubo.at(salas).at(dia).at(periodo)[0] == '*' && profesor.estaDisponible(dia, periodo)) {
-                                profesor.reservarHorario(dia, periodo);
-                                superCubo.at(salas).at(dia).at(periodo) = idRamo + " - " + profesor.getID();
-                                return true;
-                        }
-                }
+void asignarAsignatura(vector<vector<vector<string> > > &superCubo, int salas, Docente &profesor, int curso, int bucleTerminado){
+  std::cout << "Entre a la funcion" << '\n';
+  int bloquesxAsignar= decisionBloquesJuntos(profesor.getAsignaturas().at(curso).getBloques());   //Se toma la decision de cuantos bloques dejar juntos
+
+  int periodo_disponible,fin, bloques;
+
+  std::cout << "Estoy a punto de entrar al for" << '\n';
+  for(int dia = 0; dia < superCubo.at(salas).size(); dia++) {   //Se recorren los dias
+
+    bool asignar=false;
+    int posicion_ideal= profesor.getDisponibilidad().at(dia).size();    //Se obtiene la el tamaño del vector dia en Disponibilidad, se sabe que en los ultimos 2 espacios hay informacion del grupo mayor
+    int posicion_final= profesor.getDisponibilidad().at(dia).at(posicion_ideal-1)%10;   //Se ingresa a la posicion donde se encuentra el conjunto mas largo de DISPONIBLE
+    int largo=profesor.getDisponibilidad().at(dia).at(posicion_ideal-1)/10;   //Se obtiene el largo del conjunto más largo de DISPONIBLE
+    int total_disponible= profesor.getDisponibilidad().at(dia).at(posicion_ideal-2);    //Se obtiene la cantidad total de disponibles en el día
+    std::cout << "/* QUEDAN */"<< profesor.getAsignaturas().at(curso).getBloques()<< " "<<bloquesxAsignar<< " "<<largo<<" "<<bucleTerminado<<" "<<total_disponible<<'\n';
+
+    if (bloquesxAsignar==0) break;  //Si no quedan bloques, se detiene la iteracion
+
+    if (total_disponible) { //Si hay disponibilidad
+
+      if (bucleTerminado<2) {
+        if (bloquesxAsignar==1){ //Si hay UN SOLO BLOQUE por asignar
+          std::cout << "BUSCANDO BLOQUE AISLADO" << '\n';
+
+          if (total_disponible-largo>=1){ //si hay bloques por separado en el vector disponibilidad
+            periodo_disponible= profesor.asignarBloqueAislado(dia,posicion_final,largo,curso);    //Se buscara un bloque aislado donde asignar
+            fin=periodo_disponible;
+            bloques=1;
+            asignar=true;
+          }
+
+        }else{    //Si hay mas de un BLOQUE
+          if (bloquesxAsignar==largo) { //Si los bloques a asignar coinciden con el largo del conjunto
+            std::cout << "TODOS JUNTOS" << '\n';
+            periodo_disponible=(posicion_final-largo)+1;
+            fin=(posicion_final-largo)+bloquesxAsignar;
+            bloques=bloquesxAsignar;
+            asignar=true;
+            std::cout << "BLOQUESxASIGNAR vs Bloques "<<bloquesxAsignar <<" "<< bloques << '\n';
+          }
         }
-        return false;
+
+
+      }else{    //Si ya se itero una vez y no se dieron los caso anteriores
+        if (bucleTerminado>4) {   //Si ya se intento poner lo que más se puede y aun asi no se puede asignar horario
+          if (total_disponible-largo>=1){ //si hay bloques por separado en el vector disponibilidad
+            std::cout << "AHORA SOLO ASIGNO DE 1, TENGO 1 BLOQUE SUELTO EN EL VECTOR" << '\n';
+            periodo_disponible= profesor.asignarBloqueAislado(dia,posicion_final,largo,curso);    //Se buscara un bloque aislado donde asignar
+            fin=periodo_disponible;
+            bloques=1;
+            asignar=true;
+          }else{  //Aun se puede asignar en el conjunto
+            std::cout << "AHORA SOLO ASIGNO DE 1, TENGO 1 BLOQUE EN EL VECTOR" << '\n';
+            periodo_disponible= posicion_final-largo+1;
+            fin=periodo_disponible;
+            bloques=1;
+            asignar=true;
+        }
+        }else{    //Si aun no se intenta asignar lo que mas se puede
+          if (bloquesxAsignar==1){  //Si hay un solo bloque
+            if (largo==0){ //si hay bloques por separado en el vector disponibilidad
+              std::cout << "TENGO 1 BLOQUE SUELTO EN EL VECTOR" << '\n';
+              periodo_disponible= profesor.asignarBloqueAislado(dia,posicion_final,largo,curso);    //Se buscara un bloque aislado donde asignar
+              fin=periodo_disponible;
+              bloques=1;
+              asignar=true;
+            }else{  //Aun se puede asignar en el conjunto
+              std::cout << "fgfd" << '\n';
+              periodo_disponible= posicion_final-largo+1;
+              fin=periodo_disponible;
+              bloques=1;
+              asignar=true;
+          }
+
+          }else{  //Si hay más de un bloque
+            if (bloquesxAsignar<largo) {    //y si los bloques que se necesitan son menores al largo del conjunto
+              std::cout << "LO QUE MAS SE PUEDE" << '\n';
+              periodo_disponible=(posicion_final-largo)+1;
+              fin=posicion_final; //Se asigna todo lo que se tiene
+              bloques=bloquesxAsignar;
+              asignar=true;
+
+            }
+
+                    // }
+                  }
+
+        }
+
+      }
+
+      if (asignar==true) {
+        std::cout << "ENTRANDO A disponibilidadSuperCubo" <<periodo_disponible <<'\n';
+        if (disponibilidadSuperCubo(salas,dia,periodo_disponible, superCubo, bloques)==true){   //Si la sala,dia y periodo estan disponibles
+          std::cout << "HOLA, asigne  "<< bloques <<" Con"<< profesor.getAsignaturas().at(curso).getNombre()<< "con el profe "<< profesor.getNombre()<<'\n';
+
+          for (int iterador=periodo_disponible; iterador<periodo_disponible+bloques; iterador++){  //Se iterará desde el comienzo del conjunto hasta cubrir los bloques solicitados
+            profesor.reservarHorario(dia, iterador, curso);   //Se reserva el horario
+            std::cout << "Ya reserve horario MAS DE UN BLOQUE "<<bloques << '\n';
+            superCubo.at(salas).at(dia).at(iterador) = profesor.getAsignaturas().at(curso).getCodigo() + " - " + profesor.getID();  //Se anota en el Cubo
+            bloquesxAsignar--;
+            std::cout << "ANOTE EN EL CUBO" << '\n';
+          }
+        }else{
+          asignar=false;
+        }
+      }
+
+    }
+  }
 }
 
 //================================== FUNCIONES DOCENTES =====================================
@@ -350,10 +461,9 @@ int ObtenerPesoDisponibilidad(vector<vector<int>> &disponiblexDia, vector<vector
             vector<int> dia_x; //Vector que almacena la disponibilidad por día de un profesor
             for(int col = 3; col < vectorInfoDias.at(dias).at(profesores).size(); col++) {    //Se itera por columnnas
                     if(vectorInfoDias.at(dias).at(profesores).at(col)[0] == 'D') {
-                            conjunto_momentaneo++;    //Suma los bloques disponibles
+                            conjunto_momentaneo++, dispDiaria++;    //Suma los bloques disponibles
                             dia_x.push_back(1);
                             conjunto_mayor= obtenerNumMayor(conjunto_mayor,conjunto_momentaneo, col-3);
-                            dispDiaria++;
                     } else {
                             conjunto_momentaneo=0;    //Cuando se encuentra un "NO DISPONIBLE" la sumatoria se reinicia.
                             dia_x.push_back(0);
@@ -381,11 +491,10 @@ vector<Docente> obtenerVectorInfoDocentes(char *argv[]){
                 string id = vectorInfoDias.at(0).at(profesores).at(0); //OJO, como la información de los profesores se repite en todas las hojas, se sca solo de la inicial.
                 string nombres =  vectorInfoDias.at(0).at(profesores).at(1);
                 string apellidos = vectorInfoDias.at(0).at(profesores).at(2);
-                std::cout << "APELLIDOS: "<<apellidos << '\n';
                 int pesoDisponibilidad=ObtenerPesoDisponibilidad(disponiblexDia,vectorInfoDias,profesores,cantidad_hojas);  //variable que contabiliza los NO DISPONIBLES
                 vector <Curso> asignaturas=VectorVectoresAsignatura(CursosDocente, id);
                 Docente nuevoProfesor(id, nombres, apellidos, disponiblexDia, pesoDisponibilidad, 0,asignaturas);   //despues de que se recopila todos los datos se crea un objecto de clase Docente
-                nuevoProfesor.imprimirDocente();
+                //nuevoProfesor.imprimirDocente();
                 disponiblexDia.clear();
                 vectorInfoDocentes.push_back(nuevoProfesor);    //se guarda el objeto en vector que los contenga a todos
         }
@@ -483,17 +592,6 @@ vector<Curso> obtenerVectorInfoCursos(char *argv[]){
         return vectorInfoCurso;
 }
 
-// //Imprime vector de Docentes
-// void imprimirVectorCursos(char *argv[]){
-//         vector<Curso> allCursos = obtenerVectorInfoCursos(argv);
-//         vector<Docente> allDocentes = obtenerVectorInfoDocentes(argv);
-//         int contador = 0;
-//         for(Curso info : allCursos) {
-//                 info.imprimirCurso(buscarDocenteByID(info.getID_Docente(), allDocentes));
-//                 contador++;
-//         }
-//         cout << endl << endl << "Cantidad de Cursos: " << contador << endl;
-// }
 
 //Retorna el numero de bloques totales asignados a un profesor desde vector Curso contenido en Docente
 int obtenerBloquesPorDocenteByCurso(vector<Curso> vector){

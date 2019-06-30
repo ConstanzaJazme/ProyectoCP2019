@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
                 //Obtiene la información de las salas, almacenando el nombre de las salas en la clase SALA
                 vector<Sala> vectorSala = obtenerVectorInfoSalas(argv);
                 // //Obtiene la información de los cursos, almacenando codigo, nombre y bloques en la clase CURSO
-                vector<Curso> vectorCurso = obtenerVectorInfoCursos(argv);
+                //vector<Curso> vectorCurso = obtenerVectorInfoCursos(argv);
 
                 ordenarPorHolguraVectorDocente(vectorDocente);
 
@@ -62,24 +62,34 @@ int main(int argc, char *argv[])
                 for(int docente = 0; docente < vectorDocente.size(); docente++) { //Se recorren todos los profesores
                         Docente profesor = vectorDocente.at(docente);
                         for(int curso = 0; curso < profesor.getAsignaturas().size(); curso++) { //Se recorren todos los cursos que tiene cada profesor
-                                int bloques = profesor.getAsignaturas().at(curso).getBloques();
-                                string idRamo = profesor.getAsignaturas().at(curso).getCodigo();
-                                bool ramoInformatica = esRamoInformatica(idRamo); //Se verifica si el ramo obtenido es de informatica
 
-                                while(bloques > 0) { //Mientras el ramo aun tenga bloques sin asignar
-                                        int salaAleatoria = rand()%vectorSala.size();
+                                int bucleTerminado=0;    //bucleTerminado confirma si ya se ha iterado al menos una vez por cada dia y existenciaGrupos confirma si existen disponibilidades juntas
+                                bool ramoInformatica = esRamoInformatica(profesor.getAsignaturas().at(curso).getCodigo()); //Se verifica si el ramo obtenido es de informatica
+
+                                while(profesor.getAsignaturas().at(curso).getBloques()>0) { //Mientras el ramo aun tenga bloques sin asignar
+                                  std::cout << "ESTOY COMENZANDO EL WHILE " <<bucleTerminado<< '\n';
+
+                                        int salaAleatoria = rand()%vectorSala.size();   //Se toma una sala al azar
 
                                         bool esLaboratorio = esLab(vectorSala.at(salaAleatoria).getNombre()); //Se verifica si la sala es de LAB
-
+                                        std::cout << "Estoy a punto de ver en que sala" << '\n';
                                         if(!ramoInformatica && !esLaboratorio) { //Si el ramo no de informatica ni la sala es un lab
-                                                if (asignarAsignatura(superCubo,salaAleatoria,profesor,idRamo)) bloques--;
+                                            std::cout << "Entre a una sala normal" << '\n';
+                                                asignarAsignatura(superCubo,salaAleatoria,profesor,curso,bucleTerminado);
+                                                bucleTerminado++;
+
                                         }
-                                        if(ramoInformatica && esLaboratorio) { //Si el ramo es de informatica y sala es un lab
-                                                if (asignarAsignatura(superCubo,salaAleatoria,profesor,idRamo)) bloques--;
+                                        else if(ramoInformatica && esLaboratorio) { //Si el ramo es de informatica y sala es un lab
+                                          std::cout << "Entre a un lab" << '\n';
+                                                asignarAsignatura(superCubo,salaAleatoria,profesor,curso,bucleTerminado);
+                                                bucleTerminado++;
+
+
                                         }
                                 }
+                                std::cout << "/* TERMINE UNA ASIGNATURA el siguiente curso es  */"<< profesor.getAsignaturas().at(curso).getBloques() << '\n';
                         }
-                        profesor.imprimirDocente();
+                        //profesor.imprimirDocente();
                 }
                 escribirResultadosEnXlsxFinal(vectorSala, superCubo);
         }
