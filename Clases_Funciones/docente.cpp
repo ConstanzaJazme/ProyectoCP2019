@@ -123,14 +123,10 @@ int Docente::asignarBloqueAislado(int dia, int posicion_final, int largo,int cur
     }
     else{   //Sino se encuentra con el conjunto
       if (this->Disponibilidad.at(dia).at(iterador)==1) { //Busca una disponibilidad
-        std::cout << "iterador: "<<iterador << '\n';
-
           return iterador;  //Se devuelve la posicion donde se asigno
       }
     }
-  }
-  std::cout << "/* message */" << '\n';
-  
+  }  
 }
 
 void Docente::reservarHorario(int dia, int periodo, int curso){

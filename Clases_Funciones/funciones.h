@@ -33,10 +33,10 @@ void escribirPeriodos(xlnt::worksheet, xlnt::border);
 void borde_alineamiento_tam(xlnt::worksheet, xlnt::border, int, int);
 
 //Escribe en el archivo final el resultado de hacer el horario
-void escribirResultadosEnXlsxFinal(vector<Sala>, vector<vector<vector<string>>>);
+void escribirResultadosEnXlsxFinal(vector<vector<Sala>>, vector<vector<vector<string>>>);
 
 //Funcion que genera un SuperCubo, el cual se recorre por sala,dia,periodo y representa el Excel de salida
-vector<vector<vector<string> > > crearSuperCubo(vector<Sala> );
+vector<vector<vector<string> > > crearSuperCubo(vector<vector<Sala>> );
 
 //Compueba si un ramo es de informatica
 bool esRamoInformatica(string);
@@ -48,7 +48,7 @@ bool esLab(string);
 //Función que retorna el mayor entre 2 numeros y la ultima posicion que tiene en un arreglo (en el formato primer digito = tamaño conjunto segundo digito posicion)
 int obtenerNumMayor(int, int, int);
 
-void asignarAsignatura(vector<vector<vector<string> > > &, int , Docente &, int, int);
+void asignarAsignatura(vector<vector<vector<string> > > &, int,int , Docente &, int, int);
 //================================== FUNCIONES DOCENTES =====================================
 
 //Muestra por pantalla una lista de los profesores desde un vector
@@ -93,10 +93,10 @@ int obtenerBloquesPorDocenteByCurso(std::vector<Curso>);
 //================================== FUNCIONES SALAS =====================================
 
 //Crea el archivo .xlsx de salida y coloca el nombre de cada pestaña segun las salas disponibles en Salas.xlsx
-void crearArchivoSalidaConNombreSheet(std::vector<Sala>);
+void crearArchivoSalidaConNombreSheet(std::vector<vector<Sala>>);
 
 //Retorna vector de Sala con la info del xlsx
-vector<Sala> obtenerVectorInfoSalas(char *argv[]);
+vector<vector<Sala>> obtenerVectorInfoSalas(char *argv[]);
 
 int decisionBloquesJuntos(int);   //Se toma la decision de cuantos bloques dejar juntos
 
