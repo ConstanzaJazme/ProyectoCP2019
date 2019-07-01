@@ -12,7 +12,7 @@ using namespace std;
 //================================== FUNCIONES GENERALES =====================================
 
 //Cuenta la cantidad de filas que hay los archivos mandados por argumento.
-void cantidadFilasPorArchivo(int argc, char *argv[]);
+int cantidadFilasPorArchivo(xlnt::workbook);
 
 //Muestra por pantalla el contenido de las primeras N filas
 //de un vector bidimensional (Filas/Columnas)
@@ -55,7 +55,7 @@ void asignarAsignatura(vector<vector<vector<string> > > &, int,int , Docente &, 
 void imprimeProfesores(vector<vector<string>> profes);
 
 //Cuenta la cantidad de asignarutas de cada profesor y las muestra por pantalla
-void cantidadAsignaturasPorProfesor(int argc, char *argv[]);
+void cantidadAsignaturasPorProfesor(xlnt::workbook, xlnt::workbook);
 
 //Obtiene la disponibilidad total que se encuentra en el XLSX DOCENTE, convirtiendola en [PESTAÑA][FILA][COLUMNA]=[DÍA][PROFESOR][PERIODO]
 vector<vector<vector<string>>> obtenerVectorInfoDisponibilidad(xlnt::workbook, int );
@@ -64,10 +64,10 @@ vector<vector<vector<string>>> obtenerVectorInfoDisponibilidad(xlnt::workbook, i
 int ObtenerPesoDisponibilidad(vector<vector<int>> &,vector<vector<vector<string>>>, int, int);
 
 //Retorna vector de Docentes con la info de todas las pestañas del xlsx
-vector<Docente> obtenerVectorInfoDocentes(char *argv[]);
+vector<Docente> obtenerVectorInfoDocentes(xlnt::workbook, xlnt::workbook);
 
 //Imprime vector de Docentes
-void imprimirVectorDocentes(char *argv[]);
+void imprimirVectorDocentes(xlnt::workbook);
 
 //Funcion que recibe los vectores docente y curso y ordena el de docentes segun holgura y lo imprime
 void ordenarPorHolguraVectorDocente(std::vector<Docente> &);
@@ -82,7 +82,7 @@ vector <Curso> VectorVectoresAsignatura(vector< vector<string>>, string);
 int bloquesReales(int);
 
 //Retorna vector de Curso con la info del xlsx
-vector<Curso> obtenerVectorInfoCursos(char *argv[]);
+vector<Curso> obtenerVectorInfoCursos(xlnt::workbook);
 
 //Imprime vector de Docentes
 void imprimirVectorCursos(char *argv[]);
@@ -96,7 +96,7 @@ int obtenerBloquesPorDocenteByCurso(std::vector<Curso>);
 void crearArchivoSalidaConNombreSheet(std::vector<vector<Sala>>);
 
 //Retorna vector de Sala con la info del xlsx
-vector<vector<Sala>> obtenerVectorInfoSalas(char *argv[]);
+vector<vector<Sala>> obtenerVectorInfoSalas(xlnt::workbook);
 
 int decisionBloquesJuntos(int);   //Se toma la decision de cuantos bloques dejar juntos
 

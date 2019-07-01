@@ -9,28 +9,16 @@ using namespace std;
 //================================== FUNCIONES GENERALES =====================================
 
 //Cuenta la cantidad de filas que hay en los archivos mandados por argumento.
-void cantidadFilasPorArchivo(int argc, char *argv[]){
-        if(argc > 1) { //Verifica la cantidad de argumentos a momento de ejecutar
-                cout << "Cantidad de archivos ingresados: " << argc-1 << endl << endl;
-                //iteracion desde el el 2° objeto (1° es nombre del .cpp)
-                for(int archivos = 1; archivos < argc; archivos++) {
-                        cout << "Nombre archivo: " << argv[archivos] << endl;
+int cantidadFilasPorArchivo(xlnt::workbook archivo){
+	auto sheetArchivo = archivo.active_sheet(); //trabajando con la 1° pestaña del archivo
 
-                        xlnt::workbook xlsCursos; //instancia de objeto que aloja el xlsx
-                        xlsCursos.load(argv[archivos]); //carga del xlsx
-                        auto sheetCursos = xlsCursos.active_sheet(); //trabajando con la 1° pestaña del archivo
+	int contadorFilas = 0;
+	for (auto row : sheetArchivo.rows(false)) //seudoForEach que recorrelas filas.
+	{
+		contadorFilas++;
+	}
 
-                        int contadorFilas = 0;
-                        for (auto row : sheetCursos.rows(false)) //seudoForEach que recorrelas filas.
-                        {
-                                contadorFilas++;
-                        }
-
-                        cout << "Cantidad de filas: " << contadorFilas << endl << endl;
-                }
-        } else {
-                cout << "No se ingresaron archivos .xlsx" << endl;
-        }
+	return contadorFilas;
 }
 
 //Muestra por pantalla el contenido de las primeras N filas
@@ -398,17 +386,13 @@ void imprimeProfesores(vector<vector<string> > profes){
 }
 
 //Cuenta la cantidad de asignarutas de cada profesor y las muestra por pantalla
-void cantidadAsignaturasPorProfesor(int argc, char *argv[]){
-        xlnt::workbook xlsCursos; //instancia de objeto que aloja el xlsx
-        xlsCursos.load(argv[1]); //carga del xlsx
-        auto sheetCursos = xlsCursos.active_sheet(); //seleccionar 1° pestaña
+void cantidadAsignaturasPorProfesor(xlnt::workbook xlsxCursos ,xlnt::workbook xlsxDocentes){
+        auto sheetCursos = xlsxCursos.active_sheet(); //seleccionar 1° pestaña
 
-        xlnt::workbook xlsDocentes; //instancia de objeto que aloja el xlsx
-        xlsDocentes.load(argv[2]); //carga xlsx
-        auto sheetDocentes = xlsDocentes.active_sheet(); //seleccionar 1° pestaña
+        auto sheetDocentes = xlsxDocentes.active_sheet(); //seleccionar 1° pestaña
 
-        vector< vector<string> > vectorCursos = crearVectorVectoresIndex(xlsCursos, 0); //Vector de vectores de los cursos
-        vector< vector<string> > vectorDocentes = crearVectorVectoresIndex(xlsDocentes, 0); //Vector de vectores de los docentes
+        vector< vector<string> > vectorCursos = crearVectorVectoresIndex(xlsxCursos, 0); //Vector de vectores de los cursos
+        vector< vector<string> > vectorDocentes = crearVectorVectoresIndex(xlsxDocentes, 0); //Vector de vectores de los docentes
 
 
         int contador = 0;
@@ -436,10 +420,10 @@ void cantidadAsignaturasPorProfesor(int argc, char *argv[]){
 }
 
 //Obtiene la disponibilidad total que se encuentra en el XLSX DOCENTE, convirtiendola en [PESTAÑA][FILA][COLUMNA]=[DÍA][PROFESOR][PERIODO]
-vector<vector<vector<string> > > obtenerVectorInfoDisponibilidad(xlnt::workbook xlsDocentes, int cantidad_hojas){
+vector<vector<vector<string> > > obtenerVectorInfoDisponibilidad(xlnt::workbook xlsxDocentes, int cantidad_hojas){
         vector<vector<vector<string> > > vectorInfoDias; //Vector que contiene vector de vectores por día
         for (int sheet = 0; sheet < cantidad_hojas; sheet++) { //iteracion por pestañas en el xlsx
-                vector< vector<string> > vectorSheet = crearVectorVectoresIndex(xlsDocentes, sheet); //obtencion de informacion de cada pestaña
+                vector< vector<string> > vectorSheet = crearVectorVectoresIndex(xlsxDocentes, sheet); //obtencion de informacion de cada pestaña
                 vectorInfoDias.push_back(vectorSheet);
         }
         return vectorInfoDias;
@@ -471,14 +455,11 @@ int ObtenerPesoDisponibilidad(vector<vector<int>> &disponiblexDia, vector<vector
   }
 
 //Retorna vector de Docentes con la info de todas las pestañas del xlsx
-vector<Docente> obtenerVectorInfoDocentes(char *argv[]){
-        xlnt::workbook xlsDocentes, xlsCursos;
-        xlsDocentes.load(argv[2]); //carga del xlsx
-        xlsCursos.load(argv[1]); //carga del xlsx
-        int cantidad_hojas= xlsDocentes.sheet_count();
+vector<Docente> obtenerVectorInfoDocentes(xlnt::workbook xlsxDocentes, xlnt::workbook xlsxCursos){
+        int cantidad_hojas= xlsxDocentes.sheet_count();
         vector<Docente> vectorInfoDocentes; //Vector a devolver
-        vector< vector<string> > CursosDocente = crearVectorVectoresIndex(xlsCursos, 0); //Vector de vectores de los cursos
-        vector<vector<vector<string> > > vectorInfoDias= obtenerVectorInfoDisponibilidad(xlsDocentes,cantidad_hojas); //Vector que contiene vector de vectores por día cada pestaña día del XLSX
+        vector< vector<string> > CursosDocente = crearVectorVectoresIndex(xlsxCursos, 0); //Vector de vectores de los cursos
+        vector<vector<vector<string> > > vectorInfoDias= obtenerVectorInfoDisponibilidad(xlsxDocentes,cantidad_hojas); //Vector que contiene vector de vectores por día cada pestaña día del XLSX
         for (int profesores = 1; profesores < vectorInfoDias.at(0).size(); profesores++) {    //Iteración por profesor
                 vector<vector<int> > disponiblexDia;   //Vector que será rellenado con las disponibilidades diarias de cada profesor
                 string id = vectorInfoDias.at(0).at(profesores).at(0); //OJO, como la información de los profesores se repite en todas las hojas, se sca solo de la inicial.
@@ -495,8 +476,8 @@ vector<Docente> obtenerVectorInfoDocentes(char *argv[]){
 }
 
 //Imprime vector de Docentes
-void imprimirVectorDocentes(char *argv[]){
-        vector<Docente> allDocentes = obtenerVectorInfoDocentes(argv);
+void imprimirVectorDocentes(xlnt::workbook xlsxDocentes, xlnt::workbook xlsxCursos){
+        vector<Docente> allDocentes = obtenerVectorInfoDocentes(xlsxDocentes, xlsxCursos);
         int contador = 0;
         for(Docente info : allDocentes) {
                 info.imprimirDocente();
@@ -565,12 +546,10 @@ int bloquesReales(int bloques){
 }
 
 //Retorna vector de Curso con la info del xlsx
-vector<Curso> obtenerVectorInfoCursos(char *argv[]){
+vector<Curso> obtenerVectorInfoCursos(xlnt::workbook xlsxCursos){
         vector<Curso> vectorInfoCurso; //Vector a devolver
-        xlnt::workbook xlsCurso;
-        xlsCurso.load(argv[1]); //carga del xlsx
         //obtencion de lista de los docentes
-        vector< vector<string> > vectorCurso = crearVectorVectoresIndex(xlsCurso, 0);
+        vector< vector<string> > vectorCurso = crearVectorVectoresIndex(xlsxCursos, 0);
         //iteracion por curso
         for (int curso = 1; curso < vectorCurso.size(); curso++)
         {
@@ -604,13 +583,11 @@ int obtenerBloquesPorDocenteByCurso(vector<Curso> vector){
   // }
 
 //Crea el archivo .xlsx de salida y coloca el nombre de cada pestaña segun las salas disponibles en Salas.xlsx
-vector<vector<Sala>> obtenerVectorInfoSalas(char *argv[]){
+vector<vector<Sala>> obtenerVectorInfoSalas(xlnt::workbook xlsxSalas){
         vector<vector<Sala>> vectorInfoSala; //Vector a devolver
         vector<Sala> salaNormal;
         vector<Sala> laboratorio;
-        xlnt::workbook xlsxSala;
-        xlsxSala.load(argv[3]); //carga del xlsx
-        vector< vector<string> > vectorSala = crearVectorVectoresIndex(xlsxSala, 0); //obtencion de lista de las salas
+        vector< vector<string> > vectorSala = crearVectorVectoresIndex(xlsxSalas, 0); //obtencion de lista de las salas
         //iteracion por sala
         for (int sala = 1; sala < vectorSala.size(); sala++)
         {
