@@ -77,7 +77,7 @@ vector<Curso> Docente::getAsignaturas(){
         return this->Asignaturas;
 }
 
-vector<vector<int>> Docente::getDisponibilidad(){
+vector<vector<int> > Docente::getDisponibilidad(){
         return this->Disponibilidad;
 }
 
@@ -109,41 +109,41 @@ bool Docente::estaDisponible(int dia, int bloques){
 }
 
 int Docente::asignarBloqueAislado(int dia, int posicion_final, int largo,int curso){    //Retorna la posicion de un bloque aislado
-  int fin= this->Disponibilidad.at(dia).size()-2;   //Obtiene el tamaño del vector dia, variará dependiendo del dia
-  int bloques=this->Asignaturas.at(curso).getBloques();   //Obtiene los bloques restantes de la asignatura
-  for (int iterador=0; iterador < fin; iterador++){   //itera el día
-    if(iterador == (posicion_final-largo) + 1){    //Si el iterador llega al conjunto más largo
-      // if (largo == 1) {   //Pero si es 1, ya se puede llenar ese espacio
-      //   std::cout << "iterador: "<<iterador << '\n';
-      //
-      //   return iterador;  //Se devuelve la posicion donde se asigno
-      // }
-      iterador=posicion_final;    //Se saltará todas esas iteraciones
+        int fin= this->Disponibilidad.at(dia).size()-2; //Obtiene el tamaño del vector dia, variará dependiendo del dia
+        int bloques=this->Asignaturas.at(curso).getBloques(); //Obtiene los bloques restantes de la asignatura
+        for (int iterador=0; iterador < fin; iterador++) { //itera el día
+                if(iterador == (posicion_final-largo) + 1) { //Si el iterador llega al conjunto más largo
+                        // if (largo == 1) {   //Pero si es 1, ya se puede llenar ese espacio
+                        //   std::cout << "iterador: "<<iterador << '\n';
+                        //
+                        //   return iterador;  //Se devuelve la posicion donde se asigno
+                        // }
+                        iterador=posicion_final; //Se saltará todas esas iteraciones
 
-    }
-    else{   //Sino se encuentra con el conjunto
-      if (this->Disponibilidad.at(dia).at(iterador)==1) { //Busca una disponibilidad
-          return iterador;  //Se devuelve la posicion donde se asigno
-      }
-    }
-  }  
+                }
+                else{ //Sino se encuentra con el conjunto
+                        if (this->Disponibilidad.at(dia).at(iterador)==1) { //Busca una disponibilidad
+                                return iterador; //Se devuelve la posicion donde se asigno
+                        }
+                }
+        }
 }
 
 void Docente::reservarHorario(int dia, int periodo, int curso){
-  int posicion= this->Disponibilidad.at(dia).size()-1;    //Obtiene posicion de la info del conjunto de mayor disponibilidad en el vector dia
-  int conjunto= this->Disponibilidad.at(dia).at(posicion);    //Se accede al valor del conjunto [tamaño*10 + posicion]
-  int disponibilidad_total= this->Disponibilidad.at(dia).at(posicion-1);    //Se accede al valor de la disponibilidad total
+        int posicion= this->Disponibilidad.at(dia).size()-1; //Obtiene posicion de la info del conjunto de mayor disponibilidad en el vector dia
+        int conjunto= this->Disponibilidad.at(dia).at(posicion); //Se accede al valor del conjunto [tamaño*10 + posicion]
+        int disponibilidad_total= this->Disponibilidad.at(dia).at(posicion-1); //Se accede al valor de la disponibilidad total
 
-  int bloques=this->Asignaturas.at(curso).getBloques();
-  this->Disponibilidad.at(dia).at(periodo) = 0;   //Asigna el bloque
-  this->Asignaturas.at(curso).setBloques(bloques-1);    //Se le quita un bloque al ramo del profesor
+        int bloques=this->Asignaturas.at(curso).getBloques();
+        this->Disponibilidad.at(dia).at(periodo) = 0; //Asigna el bloque
+        this->Asignaturas.at(curso).setBloques(bloques-1); //Se le quita un bloque al ramo del profesor
 
-  if (periodo > (conjunto%10-conjunto/10) && periodo<=conjunto%10) {
-    this->Disponibilidad.at(dia).at(posicion)=((conjunto/10)-1)*10+(conjunto%10);
-    this->Disponibilidad.at(dia).at(posicion-1)=disponibilidad_total-1;
-  }
-  else{
-    this->Disponibilidad.at(dia).at(posicion-1)=disponibilidad_total-1;
+        if (periodo > (conjunto%10-conjunto/10) && periodo<=conjunto%10) {
+                this->Disponibilidad.at(dia).at(posicion)=((conjunto/10)-1)*10+(conjunto%10);
+                this->Disponibilidad.at(dia).at(posicion-1)=disponibilidad_total-1;
+        }
+        else{
+                this->Disponibilidad.at(dia).at(posicion-1)=disponibilidad_total-1;
 
-  }
+        }
 }

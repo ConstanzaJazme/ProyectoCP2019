@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <xlnt/xlnt.hpp>
-// #include <mpi.h>
+#include <mpi.h>
 #include "Clases_Funciones/docente.h"
 #include "Clases_Funciones/curso.h"
 #include "Clases_Funciones/sala.h"
@@ -14,120 +14,121 @@ using namespace xlnt;
 
 int main(int argc, char *argv[])
 {
-  if(argc-1 == 6) {
+        if(argc-1 == 6) {
 
-    cout << "Cantidad de Argumentos Valida." << endl;
+                cout << "Cantidad de Argumentos Valida." << endl;
 
-		xlnt::workbook cursos; //instancia de objeto que aloja el xlsx
-		xlnt::workbook docentes; //instancia de objeto que aloja el xlsx
-		xlnt::workbook salas; //instancia de objeto que aloja el xlsx
+                xlnt::workbook cursos; //instancia de objeto que aloja el xlsx
+                xlnt::workbook docentes; //instancia de objeto que aloja el xlsx
+                xlnt::workbook salas; //instancia de objeto que aloja el xlsx
 
-		/* Se verifica que el prefijo cumpla con el archivo correspondido */
-		for (int i = 1; i < argc; i=i+2) {
-			char *prefijo = argv[i];
+                /* Se verifica que el prefijo cumpla con el archivo correspondido */
+                for (int i = 1; i < argc; i=i+2) {
+                        char *prefijo = argv[i];
 
-			if(prefijo[1] == 'c') {
-				cursos.load(argv[i+1]); //carga del xlsx
-			}
-			if(prefijo[1] == 'd') {
-				docentes.load(argv[i+1]); //carga del xlsx
-			}
-			if(prefijo[1] == 's') {
-				salas.load(argv[i+1]); //carga del xlsx
-			}
-		}
+                        if(prefijo[1] == 'c') {
+                                cursos.load(argv[i+1]); //carga del xlsx
+                        }
+                        if(prefijo[1] == 'd') {
+                                docentes.load(argv[i+1]); //carga del xlsx
+                        }
+                        if(prefijo[1] == 's') {
+                                salas.load(argv[i+1]); //carga del xlsx
+                        }
+                }
 
-    cout << "XLSX Alojados." << endl;
+                cout << "XLSX Alojados." << endl;
 
-    cout << "Cursos: " << cantidadFilasPorArchivo(cursos) << endl;
-    cout << "Docentes: " << cantidadFilasPorArchivo(docentes) << endl;
-    cout << "Salas: " << cantidadFilasPorArchivo(salas) << endl;
+                cout << "Cursos: " << cantidadFilasPorArchivo(cursos) << endl;
+                cout << "Docentes: " << cantidadFilasPorArchivo(docentes) << endl;
+                cout << "Salas: " << cantidadFilasPorArchivo(salas) << endl;
 
-    int mi_rango; /* rango del proceso    */
-    int p; /* numero de procesos   */
-    int tag = 0; /* etiqueta del mensaje */
+                int mi_rango; /* rango del proceso    */
+                int p; /* numero de procesos   */
+                int tag = 0; /* etiqueta del mensaje */
 
-    // MPI_Init(NULL, NULL);
-    // MPI_Comm_size(MPI_COMM_WORLD, &p);
-    // MPI_Comm_rank(MPI_COMM_WORLD, &mi_rango);
+                MPI_Init(NULL, NULL);
+                MPI_Comm_size(MPI_COMM_WORLD, &p);
+                MPI_Comm_rank(MPI_COMM_WORLD, &mi_rango);
 
-    //Obtiene la información de los docente, almacenando id, nombres, apellidos, pesodisponibilidad, holgura y sus cursos en la clase DOCENTE
-    vector<Docente> vectorDocente = obtenerVectorInfoDocentes(docentes, cursos);
-    //Obtiene la información de las salas, almacenando el nombre de las salas en la clase SALA
-    vector<vector<Sala>> vectorSala = obtenerVectorInfoSalas(salas);
-    // //Obtiene la información de los cursos, almacenando codigo, nombre y bloques en la clase CURSO
-    //vector<Curso> vectorCurso = obtenerVectorInfoCursos(argv);
+                //Obtiene la información de los docente, almacenando id, nombres, apellidos, pesodisponibilidad, holgura y sus cursos en la clase DOCENTE
+                vector<Docente> vectorDocente = obtenerVectorInfoDocentes(docentes, cursos);
+                //Obtiene la información de las salas, almacenando el nombre de las salas en la clase SALA
+                vector<vector<Sala> > vectorSala = obtenerVectorInfoSalas(salas);
+                // //Obtiene la información de los cursos, almacenando codigo, nombre y bloques en la clase CURSO
+                //vector<Curso> vectorCurso = obtenerVectorInfoCursos(argv);
 
-    ordenarPorHolguraVectorDocente(vectorDocente);
+                ordenarPorHolguraVectorDocente(vectorDocente);
 
-    vector<vector<vector<string> > > superCubo = crearSuperCubo(vectorSala);
-    //
-    // int divProfesores = vectorDocente.size() / (p - 1);
-    // int diferencia = 0;
-    // vector<int> indexProfesores;
-    // int numPrueba = 0;
+                vector<vector<vector<string> > > superCubo = crearSuperCubo(vectorSala);
 
-    // if (mi_rango != 0) { /* -- Esclavos -- fuentes encargadas de realizar los calculos */
-    //         MPI_Recv(&numPrueba, 2, MPI_INT, 0, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE); /* Se recibe un sub vector para luego calcular el sub promedio*/
-    //
-    //         if(mi_rango == p - 1) {
-    //                 diferencia = vectorDocente.size() - (divProfesores * (p - 1));
-    //         }
+                int divProfesores = vectorDocente.size() / (p - 1);
+                int diferencia = 0;
+                vector<int> indexProfesores;
+                int numPrueba = 0;
 
-    for(int docente = 0; docente < vectorDocente.size(); docente++) { //Se recorren todos los profesores
-      Docente profesor = vectorDocente.at(docente);
-      for(int curso = 0; curso < profesor.getAsignaturas().size(); curso++) { //Se recorren todos los cursos que tiene cada profesor
+                if (mi_rango != 0) { /* -- Esclavos -- fuentes encargadas de realizar los calculos */
+                        MPI_Recv(&numPrueba, 2, MPI_INT, 0, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE); /* Se recibe un sub vector para luego calcular el sub promedio*/
 
-        int bucleTerminado=0;    //bucleTerminado confirma si ya se ha iterado al menos una vez por cada dia y existenciaGrupos confirma si existen disponibilidades juntas
-        bool ramoInformatica = esRamoInformatica(profesor.getAsignaturas().at(curso).getCodigo()); //Se verifica si el ramo obtenido es de informatica
+                        if(mi_rango == p - 1) {
+                                diferencia = vectorDocente.size() - (divProfesores * (p - 1));
+                        }
 
-        while(profesor.getAsignaturas().at(curso).getBloques()>0) { //Mientras el ramo aun tenga bloques sin asignar
+                        // for(int docente = 0; docente < vectorDocente.size(); docente++) { //Se recorren todos los profesores
+                        for(int docente = (mi_rango-1) * divProfesores; docente < divProfesores * mi_rango + diferencia; docente++) {  //Se recorren todos los profesores
+                                Docente profesor = vectorDocente.at(docente);
+                                for(int curso = 0; curso < profesor.getAsignaturas().size(); curso++) { //Se recorren todos los cursos que tiene cada profesor
 
-          // int salaAleatoria = rand()%vectorSala.size();   //Se toma una sala al azar
+                                        int bucleTerminado=0; //bucleTerminado confirma si ya se ha iterado al menos una vez por cada dia y existenciaGrupos confirma si existen disponibilidades juntas
+                                        bool ramoInformatica = esRamoInformatica(profesor.getAsignaturas().at(curso).getCodigo()); //Se verifica si el ramo obtenido es de informatica
 
-          // bool esLaboratorio = esLab(vectorSala.at(salaAleatoria).getNombre()); //Se verifica si la sala es de LAB
-          if(ramoInformatica) { //Si el ramo es de informatica
-            int salaAleatoria = rand()%vectorSala.at(1).size();   //Se toma un lab al azar
-            std::cout << "Entre a un ramo de informatica en la sala "<<vectorSala.at(1).at(salaAleatoria).getNombre() << '\n';
-            asignarAsignatura(superCubo,salaAleatoria,vectorSala.at(0).size(),profesor,curso,bucleTerminado);
-            bucleTerminado++;
+                                        while(profesor.getAsignaturas().at(curso).getBloques()>0) { //Mientras el ramo aun tenga bloques sin asignar
 
-          }
-          else{ //Si el ramo no es de informatica
-            int salaAleatoria = rand()%vectorSala.at(0).size();   //Se toma una sala al azar
-            std::cout << "Entre a un ramo de Plan Comun en la sala "<<vectorSala.at(0).at(salaAleatoria).getNombre() << '\n';
-            asignarAsignatura(superCubo,salaAleatoria,vectorSala.at(0).size(),profesor,curso,bucleTerminado);
-            bucleTerminado++;
-          }
+                                                // int salaAleatoria = rand()%vectorSala.size();   //Se toma una sala al azar
+
+                                                // bool esLaboratorio = esLab(vectorSala.at(salaAleatoria).getNombre()); //Se verifica si la sala es de LAB
+                                                if(ramoInformatica) { //Si el ramo es de informatica
+                                                        int salaAleatoria = rand()%vectorSala.at(1).size(); //Se toma un lab al azar
+                                                        std::cout << "Entre a un ramo de informatica en la sala "<<vectorSala.at(1).at(salaAleatoria).getNombre() << '\n';
+                                                        asignarAsignatura(superCubo,salaAleatoria,vectorSala.at(0).size(),profesor,curso,bucleTerminado);
+                                                        bucleTerminado++;
+
+                                                }
+                                                else{ //Si el ramo no es de informatica
+                                                        int salaAleatoria = rand()%vectorSala.at(0).size(); //Se toma una sala al azar
+                                                        std::cout << "Entre a un ramo de Plan Comun en la sala "<<vectorSala.at(0).at(salaAleatoria).getNombre() << '\n';
+                                                        asignarAsignatura(superCubo,salaAleatoria,vectorSala.at(0).size(),profesor,curso,bucleTerminado);
+                                                        bucleTerminado++;
+                                                }
+
+                                        }
+                                }
+                                // profesor.imprimirDocente();
+                        }
+                        escribirResultadosEnXlsxFinal(vectorSala, superCubo);
+
+
+                } else { /* -- MASTER -- fuente encargada de distribuir los sub vectores*/
+
+                        for(int profes = 0; profes < vectorDocente.size(); profes++) {
+                                indexProfesores.push_back(stoi(vectorDocente.at(profes).getID()));
+                        }
+
+                        for (int fuente = 1; fuente < p; fuente++) {
+                                MPI_Send(&numPrueba, 2, MPI_INT, fuente, tag, MPI_COMM_WORLD); /* Envía sub vectores a todas las fuentes (exceptuando MASTER)*/
+                        }
+                }
+
+                MPI_Finalize();
+
+
 
         }
-      }
-      // profesor.imprimirDocente();
-    }
-    escribirResultadosEnXlsxFinal(vectorSala, superCubo);
 
 
-    // } else { /* -- MASTER -- fuente encargada de distribuir los sub vectores*/
-    //
-    //         for(int profes = 0; profes < vectorDocente.size(); profes++) {
-    //                 indexProfesores.push_back(stoi(vectorDocente.at(profes).getID()));
-    //         }
-    //
-    //         for (int fuente = 1; fuente < p; fuente++) {
-    //                 MPI_Send(&numPrueba, 2, MPI_INT, fuente, tag, MPI_COMM_WORLD); /* Envía sub vectores a todas las fuentes (exceptuando MASTER)*/
-    //         }
-    // }
-    //
-    // MPI_Finalize();
+        else{
+                cout << "Cantidad de Argumentos Invalida." << endl;
+        }
 
-
-
-  }
-
-
-  else{
-    cout << "Cantidad de Argumentos Invalida." << endl;
-  }
-
-  return 0;
+        return 0;
 }
