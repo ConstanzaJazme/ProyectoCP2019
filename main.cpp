@@ -68,44 +68,15 @@ int main(int argc, char *argv[])
                 int numPrueba = 0;
 
                 if (mi_rango != 0) { /* -- Esclavos -- fuentes encargadas de realizar los calculos */
-                        MPI_Recv(&numPrueba, 2, MPI_INT, 0, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE); /* Se recibe un sub vector para luego calcular el sub promedio*/
-
                         if(mi_rango == p - 1) {
-                                diferencia = vectorDocente.size() - (divProfesores * (p - 1));
+                                diferencia = vectorDocente.size() % p;
                         }
 
-                        // for(int docente = 0; docente < vectorDocente.size(); docente++) { //Se recorren todos los profesores
-                        for(int docente = (mi_rango-1) * divProfesores; docente < divProfesores * mi_rango + diferencia; docente++) {  //Se recorren todos los profesores
-                                Docente profesor = vectorDocente.at(docente);
-                                for(int curso = 0; curso < profesor.getAsignaturas().size(); curso++) { //Se recorren todos los cursos que tiene cada profesor
+                        asignarPorProcesador(superCubo, vectorDocente, vectorSala, mi_rango, divProfesores, diferencia);
 
-                                        int bucleTerminado=0; //bucleTerminado confirma si ya se ha iterado al menos una vez por cada dia y existenciaGrupos confirma si existen disponibilidades juntas
-                                        bool ramoInformatica = esRamoInformatica(profesor.getAsignaturas().at(curso).getCodigo()); //Se verifica si el ramo obtenido es de informatica
+                        numPrueba = 1;
+                        MPI_Send(&numPrueba, 2, MPI_INT, 0, tag, MPI_COMM_WORLD); /* Envía sub vectores a todas las fuentes (exceptuando MASTER)*/
 
-                                        while(profesor.getAsignaturas().at(curso).getBloques()>0) { //Mientras el ramo aun tenga bloques sin asignar
-
-                                                // int salaAleatoria = rand()%vectorSala.size();   //Se toma una sala al azar
-
-                                                // bool esLaboratorio = esLab(vectorSala.at(salaAleatoria).getNombre()); //Se verifica si la sala es de LAB
-                                                if(ramoInformatica) { //Si el ramo es de informatica
-                                                        int salaAleatoria = rand()%vectorSala.at(1).size(); //Se toma un lab al azar
-                                                        std::cout << "Entre a un ramo de informatica en la sala "<<vectorSala.at(1).at(salaAleatoria).getNombre() << '\n';
-                                                        asignarAsignatura(superCubo,salaAleatoria,vectorSala.at(0).size(),profesor,curso,bucleTerminado);
-                                                        bucleTerminado++;
-
-                                                }
-                                                else{ //Si el ramo no es de informatica
-                                                        int salaAleatoria = rand()%vectorSala.at(0).size(); //Se toma una sala al azar
-                                                        std::cout << "Entre a un ramo de Plan Comun en la sala "<<vectorSala.at(0).at(salaAleatoria).getNombre() << '\n';
-                                                        asignarAsignatura(superCubo,salaAleatoria,vectorSala.at(0).size(),profesor,curso,bucleTerminado);
-                                                        bucleTerminado++;
-                                                }
-
-                                        }
-                                }
-                                // profesor.imprimirDocente();
-                        }
-                        escribirResultadosEnXlsxFinal(vectorSala, superCubo);
 
 
                 } else { /* -- MASTER -- fuente encargada de distribuir los sub vectores*/
@@ -114,8 +85,13 @@ int main(int argc, char *argv[])
                                 indexProfesores.push_back(stoi(vectorDocente.at(profes).getID()));
                         }
 
+                        asignarPorProcesador(superCubo, vectorDocente, vectorSala, mi_rango, divProfesores, diferencia);
+
                         for (int fuente = 1; fuente < p; fuente++) {
-                                MPI_Send(&numPrueba, 2, MPI_INT, fuente, tag, MPI_COMM_WORLD); /* Envía sub vectores a todas las fuentes (exceptuando MASTER)*/
+                                MPI_Recv(&numPrueba, 2, MPI_INT, fuente, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE); /* Envía sub vectores a todas las fuentes (exceptuando MASTER)*/
+                        }
+                        if(numPrueba == p-1) {
+                                escribirResultadosEnXlsxFinal(vectorSala, superCubo);
                         }
                 }
 

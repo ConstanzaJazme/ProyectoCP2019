@@ -49,6 +49,8 @@ bool esLab(string);
 int obtenerNumMayor(int, int, int);
 
 void asignarAsignatura(vector<vector<vector<string> > > &, int,int , Docente &, int, int);
+
+void asignarPorProcesador(vector<vector<vector<string> > > &, vector<Docente>, vector<vector<Sala>>, int, int, int);
 //================================== FUNCIONES DOCENTES =====================================
 
 //Muestra por pantalla una lista de los profesores desde un vector

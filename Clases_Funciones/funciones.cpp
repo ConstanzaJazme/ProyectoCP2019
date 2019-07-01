@@ -369,6 +369,35 @@ void asignarAsignatura(vector<vector<vector<string> > > &superCubo, int salas, i
 								}
 }
 
+void asignarPorProcesador(vector<vector<vector<string> > > &superCubo, vector<Docente> vectorDocente, vector<vector<Sala> > vectorSala, int mi_rango, int divProfesores, int diferencia){
+								for(int docente = mi_rango * divProfesores; docente < (divProfesores * mi_rango) + (divProfesores - 1) + diferencia; docente++) { //Se recorren todos los profesores
+																Docente profesor = vectorDocente.at(docente);
+																for(int curso = 0; curso < profesor.getAsignaturas().size(); curso++) { //Se recorren todos los cursos que tiene cada profesor
+
+																								int bucleTerminado=0; //bucleTerminado confirma si ya se ha iterado al menos una vez por cada dia y existenciaGrupos confirma si existen disponibilidades juntas
+																								bool ramoInformatica = esRamoInformatica(profesor.getAsignaturas().at(curso).getCodigo()); //Se verifica si el ramo obtenido es de informatica
+
+																								while(profesor.getAsignaturas().at(curso).getBloques()>0) { //Mientras el ramo aun tenga bloques sin asignar
+
+																																if(ramoInformatica) { //Si el ramo es de informatica
+																																								int salaAleatoria = rand()%vectorSala.at(1).size(); //Se toma un lab al azar
+																																								std::cout << "Entre a un ramo de informatica en la sala "<<vectorSala.at(1).at(salaAleatoria).getNombre() << '\n';
+																																								asignarAsignatura(superCubo,salaAleatoria,vectorSala.at(0).size(),profesor,curso,bucleTerminado);
+																																								bucleTerminado++;
+
+																																}
+																																else{ //Si el ramo no es de informatica
+																																								int salaAleatoria = rand()%vectorSala.at(0).size(); //Se toma una sala al azar
+																																								std::cout << "Entre a un ramo de Plan Comun en la sala "<<vectorSala.at(0).at(salaAleatoria).getNombre() << '\n';
+																																								asignarAsignatura(superCubo,salaAleatoria,vectorSala.at(0).size(),profesor,curso,bucleTerminado);
+																																								bucleTerminado++;
+																																}
+
+																								}
+																}
+								}
+}
+
 //================================== FUNCIONES DOCENTES =====================================
 
 //Muestra por pantalla una lista de los profesores desde un vector
