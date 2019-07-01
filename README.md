@@ -27,8 +27,8 @@ $ make
 
 - Si 'Make' no funciona, compilar y ejecutar con:
 ```
-$ g++ main.cpp -o tarea -std=c++14 -xlnt/include -lxlnt
-$ ./tarea Cursos.xlsx Docentes.xlsx Salas.xlsx
+$ g++ main.cpp -o tarea.out Clases_Funciones/docente.cpp Clases_Funciones/curso.cpp Clases_Funciones/sala.cpp Clases_Funciones/funciones.cpp -std=c++14 -Ixlnt/include -lxlnt
+$ ./tarea.out -c ArchivosXLSX/Cursos.xlsx -d ArchivosXLSX/Docentes.xlsx -s ArchivosXLSX/Salas.xlsx
 ```
 - Errores con archivo .so:
 
