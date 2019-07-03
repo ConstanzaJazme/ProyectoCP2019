@@ -3,7 +3,8 @@
 #include <stdlib.h>
 #include <time.h>
 #include <xlnt/xlnt.hpp>
-#include <mpi.h>
+// #include <mpi.h>
+#include <omp.h>
 #include "Clases_Funciones/docente.h"
 #include "Clases_Funciones/curso.h"
 #include "Clases_Funciones/sala.h"
@@ -11,6 +12,7 @@
 
 using namespace std;
 using namespace xlnt;
+
 
 int main(int argc, char *argv[])
 {
@@ -47,56 +49,84 @@ int main(int argc, char *argv[])
                 int p; /* numero de procesos   */
                 int tag = 0; /* etiqueta del mensaje */
 
-                MPI_Init(NULL, NULL);
-                MPI_Comm_size(MPI_COMM_WORLD, &p);
-                MPI_Comm_rank(MPI_COMM_WORLD, &mi_rango);
-
                 //Obtiene la información de los docente, almacenando id, nombres, apellidos, pesodisponibilidad, holgura y sus cursos en la clase DOCENTE
                 vector<Docente> vectorDocente = obtenerVectorInfoDocentes(docentes, cursos);
                 //Obtiene la información de las salas, almacenando el nombre de las salas en la clase SALA
                 vector<vector<Sala> > vectorSala = obtenerVectorInfoSalas(salas);
-                // //Obtiene la información de los cursos, almacenando codigo, nombre y bloques en la clase CURSO
-                //vector<Curso> vectorCurso = obtenerVectorInfoCursos(argv);
 
                 ordenarPorHolguraVectorDocente(vectorDocente);
 
                 vector<vector<vector<string> > > superCubo = crearSuperCubo(vectorSala);
 
-                int divProfesores = vectorDocente.size() / (p - 1);
-                int diferencia = 0;
-                vector<int> indexProfesores;
-                int numPrueba = 0;
+                // MPI_Init(NULL, NULL);
+                // MPI_Comm_size(MPI_COMM_WORLD, &p);
+                // MPI_Comm_rank(MPI_COMM_WORLD, &mi_rango);
+                //
+                //
+                //
+                // int divProfesores = vectorDocente.size() / p;
+                // int suma=0;
+                // int diferencia = 0;
+                // int numPrueba = 0;
+                //
+                // if (mi_rango != 0) { /* -- Esclavos -- fuentes encargadas de realizar los calculos */
+                //         MPI_Recv(&diferencia, 2, MPI_INT, 0, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE); /* Envía sub vectores a todas las fuentes (exceptuando MASTER)*/
+                //
+                //         if(mi_rango == p - 1) {
+                //                 diferencia = vectorDocente.size() % p;
+                //         }
+                //
+                //         asignarPorProcesador(superCubo, vectorDocente, vectorSala, mi_rango, divProfesores, diferencia);
+                //
+                //         numPrueba = 1;
+                //         MPI_Send(&numPrueba, 2, MPI_INT, 0, tag, MPI_COMM_WORLD); /* Envía sub vectores a todas las fuentes (exceptuando MASTER)*/
+                //
+                //
+                //
+                // } else { /* -- MASTER -- fuente encargada de distribuir los sub vectores*/
+                //
+                //         for (int fuente = 1; fuente < p; fuente++) {
+                //                 MPI_Send(superCubo, 2, MPI_INT, fuente, tag, MPI_COMM_WORLD); /* Envía sub vectores a todas las fuentes (exceptuando MASTER)*/
+                //
+                //
+                //                 MPI_Recv(&numPrueba, 2, MPI_INT, fuente, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE); /* Envía sub vectores a todas las fuentes (exceptuando MASTER)*/
+                //                 suma+=numPrueba;
+                //         }
+                //
+                //         asignarPorProcesador(superCubo, vectorDocente, vectorSala, mi_rango, divProfesores, diferencia);
+                //
+                //
+                //         if(suma == p-1) {
+                //                 escribirResultadosEnXlsxFinal(vectorSala, superCubo);
+                //         }
+                // }
+                //
+                // MPI_Finalize();
+                //
 
-                if (mi_rango != 0) { /* -- Esclavos -- fuentes encargadas de realizar los calculos */
-                        if(mi_rango == p - 1) {
-                                diferencia = vectorDocente.size() % p;
-                        }
+                int thread;
+                  int nthreads = omp_get_max_threads();
+                   omp_set_num_threads(nthreads);
+                   int divProfesores = vectorDocente.size() / nthreads;
+                   int diferencia=0;
 
-                        asignarPorProcesador(superCubo, vectorDocente, vectorSala, mi_rango, divProfesores, diferencia);
+                   #pragma omp parallel shared(superCubo,vectorDocente,vectorSala,divProfesores,nthreads) private(mi_rango,diferencia)
+                   {
+                       mi_rango = omp_get_thread_num();
+                       diferencia=0;
+                       if(mi_rango == nthreads-1) {
+                            diferencia = (vectorDocente.size() % nthreads);
+                      }
 
-                        numPrueba = 1;
-                        MPI_Send(&numPrueba, 2, MPI_INT, 0, tag, MPI_COMM_WORLD); /* Envía sub vectores a todas las fuentes (exceptuando MASTER)*/
+                      asignarPorProcesador(superCubo, vectorDocente, vectorSala, mi_rango, divProfesores, diferencia);
 
 
+                       std::cout<<"Soy el proceso "<<mi_rango<<std::endl;
 
-                } else { /* -- MASTER -- fuente encargada de distribuir los sub vectores*/
 
-                        for(int profes = 0; profes < vectorDocente.size(); profes++) {
-                                indexProfesores.push_back(stoi(vectorDocente.at(profes).getID()));
-                        }
-
-                        asignarPorProcesador(superCubo, vectorDocente, vectorSala, mi_rango, divProfesores, diferencia);
-
-                        for (int fuente = 1; fuente < p; fuente++) {
-                                MPI_Recv(&numPrueba, 2, MPI_INT, fuente, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE); /* Envía sub vectores a todas las fuentes (exceptuando MASTER)*/
-                        }
-                        if(numPrueba == p-1) {
+                   }
+              
                                 escribirResultadosEnXlsxFinal(vectorSala, superCubo);
-                        }
-                }
-
-                MPI_Finalize();
-
 
 
         }

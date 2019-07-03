@@ -1,9 +1,9 @@
 #Variables
 
-CXX = g++
+CXX = g++ -fopenmp
 CXXFLAGS = -std=c++14
 
-CXXMPI = mpic++
+CXXMPI = mpic++ -fopenmp
 CXXRMPI = mpirun
 CXXFLAGSMPI = --oversubscribe
 
@@ -35,4 +35,4 @@ ejecutar:
 clear:
 	rm $(NOMBRE)
 
-.DEFAULT_GOAL := tareaMPI
+.DEFAULT_GOAL := tarea

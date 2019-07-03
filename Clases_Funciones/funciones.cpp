@@ -369,10 +369,13 @@ void asignarAsignatura(vector<vector<vector<string> > > &superCubo, int salas, i
 								}
 }
 
-void asignarPorProcesador(vector<vector<vector<string> > > &superCubo, vector<Docente> vectorDocente, vector<vector<Sala> > vectorSala, int mi_rango, int divProfesores, int diferencia){
-								for(int docente = mi_rango * divProfesores; docente < (divProfesores * mi_rango) + (divProfesores - 1) + diferencia; docente++) { //Se recorren todos los profesores
+void asignarPorProcesador(vector<vector<vector<string>>> &superCubo, vector<Docente> vectorDocente, vector<vector<Sala> > vectorSala, int mi_rango, int divProfesores, int diferencia){
+								int cont=0;
+								for(int docente = mi_rango * divProfesores; docente <= (divProfesores * mi_rango) + (divProfesores - 1) + diferencia; docente++) { //Se recorren todos los profesores
 																Docente profesor = vectorDocente.at(docente);
 																for(int curso = 0; curso < profesor.getAsignaturas().size(); curso++) { //Se recorren todos los cursos que tiene cada profesor
+																	cont+= profesor.getAsignaturas().at(curso).getBloques();
+
 
 																								int bucleTerminado=0; //bucleTerminado confirma si ya se ha iterado al menos una vez por cada dia y existenciaGrupos confirma si existen disponibilidades juntas
 																								bool ramoInformatica = esRamoInformatica(profesor.getAsignaturas().at(curso).getCodigo()); //Se verifica si el ramo obtenido es de informatica
@@ -396,6 +399,10 @@ void asignarPorProcesador(vector<vector<vector<string> > > &superCubo, vector<Do
 																								}
 																}
 								}
+								std::cout << "Diferencia"<<diferencia << '\n';
+								std::cout << "MI RANGO" <<mi_rango<<" INICIO: " << mi_rango * divProfesores <<" Fin "<< (divProfesores * mi_rango) + (divProfesores - 1) + diferencia<<" ASIGNE: "<<cont<< '\n';
+								std::cout << "" << '\n';
+
 }
 
 //================================== FUNCIONES DOCENTES =====================================
