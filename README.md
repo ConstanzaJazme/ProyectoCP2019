@@ -44,15 +44,15 @@ $ git https://github.com/ConstanzaJazme/ProyectoCP2019.git
 $ cd ProyectoCP2019
 ```
 
-5. Compilar y Ejecutar con:
+5. Uso:
+
+- Compilación y Ejecución automático:
 
 ```
 $ make
 ```
 
-#### En el caso de errores:
-
-- Si 'Make' no funciona, compilar y ejecutar con:
+- Compilación y Ejecución manual:
 ```
 $ g++ main.cpp -o tarea.out Clases_Funciones/docente.cpp Clases_Funciones/curso.cpp Clases_Funciones/sala.cpp Clases_Funciones/funciones.cpp -std=c++14 -fopenmp -Ixlnt/include -lxlnt
 
