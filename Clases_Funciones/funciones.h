@@ -44,6 +44,11 @@ bool esRamoInformatica(string);
 //Compueba si una sala es LAB
 bool esLab(string);
 
+char**** convertirStringaChar(vector<vector<vector<string>>>, int &, int,int);
+
+bool argumentos(int , char *argv[]);
+
+
 
 //Función que retorna el mayor entre 2 numeros y la ultima posicion que tiene en un arreglo (en el formato primer digito = tamaño conjunto segundo digito posicion)
 int obtenerNumMayor(int, int, int);
@@ -87,7 +92,7 @@ int bloquesReales(int);
 vector<Curso> obtenerVectorInfoCursos(xlnt::workbook);
 
 //Imprime vector de Docentes
-void imprimirVectorCursos(char *argv[]);
+void imprimirVectorCursos(char *[]);
 
 //Retorna el numero de bloques totales asignados a un profesor desde vector Curso
 int obtenerBloquesPorDocenteByCurso(std::vector<Curso>);

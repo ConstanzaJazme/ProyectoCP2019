@@ -1,9 +1,9 @@
 #Variables
 
-CXX = g++ -fopenmp
-CXXFLAGS = -std=c++14
+CXX = g++
+CXXFLAGS = -std=c++14 -fopenmp
 
-CXXMPI = mpic++ -fopenmp
+CXXMPI = mpic++
 CXXRMPI = mpirun
 CXXFLAGSMPI = --oversubscribe
 
