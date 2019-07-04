@@ -1,13 +1,24 @@
 # ProyectoCP2019
 
-Descripción: *Pendiente a subir*
+Descripción: Desarrollo de Proyecto de Computación Paralela, creación de horarios coherentes dependiendo de los archivos desde donde obtiene la información
 
 ## Instalación (Ubuntu):
-1. Instalar CMake.
+1. Instalar Compilador C++.
+
+```
+$ sudo apt-get install g++
+or
+$ sudo dnf install gcc-c++
+```
+
+2. Instalar CMake.
+
 ```
 $ sudo apt-get install cmake
+or
+$ sudo yum install make automake kernel-devel
 ```
-2. Instalar Libreria.
+3. Instalar Libreria XLNT.
 
 ```
 $ git clone https://github.com/FabianAlvaradoDonoso/xlnt
@@ -17,8 +28,24 @@ $ make -j 2
 $ sudo make install
 $ sudo ldconfig
 ```
+4. Instalar OpenMP
 
-3. Compilar y Ejecutar con:
+```
+$ sudo apt-get install libomp-dev
+or
+$ sudo dnf --refresh install MUMPS-openmp
+
+```
+
+5. Instalar Proyecto
+
+```
+$ git https://github.com/ConstanzaJazme/ProyectoCP2019.git
+$ cd ProyectoCP2019
+```
+
+5. Compilar y Ejecutar con:
+
 ```
 $ make
 ```
@@ -27,17 +54,10 @@ $ make
 
 - Si 'Make' no funciona, compilar y ejecutar con:
 ```
-$ g++ main.cpp -o tarea.out Clases_Funciones/docente.cpp Clases_Funciones/curso.cpp Clases_Funciones/sala.cpp Clases_Funciones/funciones.cpp -std=c++14 -Ixlnt/include -lxlnt
-$ ./tarea.out -c ArchivosXLSX/Cursos.xlsx -d ArchivosXLSX/Docentes.xlsx -s ArchivosXLSX/Salas.xlsx
-```
-- Errores con archivo .so:
+$ g++ main.cpp -o tarea.out Clases_Funciones/docente.cpp Clases_Funciones/curso.cpp Clases_Funciones/sala.cpp Clases_Funciones/funciones.cpp -std=c++14 -fopenmp -Ixlnt/include -lxlnt
 
-	Agregar "/usr/local/lib" al final de /etc/ld.so.conf y luego:
-```
-$ sudo ldconfig
-$ ldconfig -p | grep local
+$./tarea.out -c “Archivo_Curso”.xlsx -d “Archivo_Docentes”.xlsx -s “Archivo_Salas”.xlsx
 ```
 
-## Objetivo del proyecto
-
-Pendiente a subir
+- Manual de Usuario
+https://drive.google.com/file/d/1tkBnD2nuE343VCFYNwfAYxfj4OcaTvJk/view?usp=sharing
