@@ -32,6 +32,12 @@ void escribirPeriodos(xlnt::worksheet, xlnt::border);
 
 void borde_alineamiento_tam(xlnt::worksheet, xlnt::border, int, int);
 
+//Funcion que devuelve la posicion del subvector al que pertenece la sala
+int posicionSubvectorSala(int, int);
+
+//Funcion que devuelve la posicion de la sala en el subvector
+int posicionSala(int,int,int);
+
 //Escribe en el archivo final el resultado de hacer el horario
 void escribirResultadosEnXlsxFinal(vector<vector<Sala>>, vector<vector<vector<string>>>);
 
@@ -44,18 +50,24 @@ bool esRamoInformatica(string);
 //Compueba si una sala es LAB
 bool esLab(string);
 
-char**** convertirStringaChar(vector<vector<vector<string>>>, int &, int,int);
+//Retorna dependiendo de la cantidad de ramos, la cantidad de bloques se se puede asignar a la vez
+int decisionBloquesJuntos(int);
 
-bool argumentos(int , char *argv[]);
-
-
+//Retorna true si encuentra disponibilidad en cierto periodo en cierto dia, de una sala especifica
+bool disponibilidadSuperCubo(int,int,int,vector<vector<vector<string> > >,int);
 
 //Función que retorna el mayor entre 2 numeros y la ultima posicion que tiene en un arreglo (en el formato primer digito = tamaño conjunto segundo digito posicion)
 int obtenerNumMayor(int, int, int);
 
+//Encargada de colocar un ramo en un sala, dia, y periodo coherente, ajustandose a todas las restricciones propuestas
 void asignarAsignatura(vector<vector<vector<string> > > &, int,int , Docente &, int, int);
 
+//Funcion ejecutada por cada hilo/procesador que verifica que tipo de sala es y ejecuta asignarAsignatura()
 void asignarPorProcesador(vector<vector<vector<string> > > &, vector<Docente>, vector<vector<Sala>>, int, int, int);
+
+//Verificacion de la cantidad de argumentos pasados por parametro al ejecutar
+bool argumentos(int , char *argv[]);
+
 //================================== FUNCIONES DOCENTES =====================================
 
 //Muestra por pantalla una lista de los profesores desde un vector
@@ -84,8 +96,10 @@ Docente buscarDocenteByID(std::string, std::vector<Docente>);
 
 //================================== FUNCIONES CURSOS =====================================
 
+//Retorna un vector de la clase CURSO, el cual contiene todos los cursos de un profesor
 vector <Curso> VectorVectoresAsignatura(vector< vector<string>>, string);
 
+//Conversion de horas pedagogicas a Bloques
 int bloquesReales(int);
 
 //Retorna vector de Curso con la info del xlsx
@@ -99,14 +113,11 @@ int obtenerBloquesPorDocenteByCurso(std::vector<Curso>);
 
 //================================== FUNCIONES SALAS =====================================
 
-//Crea el archivo .xlsx de salida y coloca el nombre de cada pestaña segun las salas disponibles en Salas.xlsx
-void crearArchivoSalidaConNombreSheet(std::vector<vector<Sala>>);
-
 //Retorna vector de Sala con la info del xlsx
 vector<vector<Sala>> obtenerVectorInfoSalas(xlnt::workbook);
 
-int decisionBloquesJuntos(int);   //Se toma la decision de cuantos bloques dejar juntos
-
+//Crea el archivo .xlsx de salida y coloca el nombre de cada pestaña segun las salas disponibles en Salas.xlsx
+void crearArchivoSalidaConNombreSheet(std::vector<vector<Sala>>);
 
 
 #endif // FUNCIONES_H_INCLUDED

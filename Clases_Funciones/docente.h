@@ -5,42 +5,42 @@
 
 
 class Docente {
-public:
-Docente();
-Docente(std::string, std::string, std::string, std::vector<std::vector<int> >, int, int, std::vector<Curso>);
+    public:
+        Docente();
+        Docente(std::string, std::string, std::string, std::vector<std::vector<int> >, int, int, std::vector<Curso>);
 
-void setID(std::string);
-void setNombre(std::string);
-void setApellido(std::string);
-void setPesoDisponibilidad(int);
-void setHolgura(int);
-void setAsignaturas(std::vector<Curso>);
-
-
-std::string getID();
-std::string getNombre();
-std::string getApellido();
-int getPesoDisponibilidad();
-int getHolgura();
-std::vector<Curso> getAsignaturas();
-std::vector<std::vector<int>> getDisponibilidad();
+        void setID(std::string);
+        void setNombre(std::string);
+        void setApellido(std::string);
+        void setPesoDisponibilidad(int);
+        void setHolgura(int);
+        void setAsignaturas(std::vector<Curso>);
 
 
-void imprimirDocente();
-bool estaDisponible(int, int);
-void reservarHorario(int, int, int);
-int asignarBloqueAislado(int , int , int ,int );
+        std::string getID();
+        std::string getNombre();
+        std::string getApellido();
+        int getPesoDisponibilidad();
+        int getHolgura();
+        std::vector<Curso> getAsignaturas();
+        std::vector<std::vector<int>> getDisponibilidad();
+
+
+        void imprimirDocente();
+        bool estaDisponible(int, int);
+        void reservarHorario(int, int, int);
+        int asignarBloqueAislado(int , int , int ,int );
 
 
 
-private:
-std::string ID;
-std::string Nombres;
-std::string Apellidos;
-std::vector<std::vector<int> > Disponibilidad;
-int PesoDisponibilidad;
-int Holgura;
-std::vector<Curso> Asignaturas;
+    private:
+        std::string ID;
+        std::string Nombres;
+        std::string Apellidos;
+        std::vector<std::vector<int> > Disponibilidad;
+        int PesoDisponibilidad;
+        int Holgura;
+        std::vector<Curso> Asignaturas;
 };
 
 #endif

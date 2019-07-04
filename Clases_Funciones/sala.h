@@ -3,20 +3,20 @@
 
 
 class Sala {
-public:
+    public:
 
-Sala();
-Sala(std::string);
+        Sala();
+        Sala(std::string);
 
-void setNombre(std::string);
+        void setNombre(std::string);
 
-std::string getNombre();
+        std::string getNombre();
 
 
-private:
+    private:
 
-std::string Nombre;
-std::vector<std::vector<int> > Disponibilidad;
+        std::string Nombre;
+        std::vector<std::vector<int> > Disponibilidad;
 };
 
 #endif

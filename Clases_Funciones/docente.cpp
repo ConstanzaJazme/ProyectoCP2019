@@ -113,11 +113,6 @@ int Docente::asignarBloqueAislado(int dia, int posicion_final, int largo,int cur
         int bloques=this->Asignaturas.at(curso).getBloques(); //Obtiene los bloques restantes de la asignatura
         for (int iterador=0; iterador < fin; iterador++) { //itera el día
                 if(iterador == (posicion_final-largo) + 1) { //Si el iterador llega al conjunto más largo
-                        // if (largo == 1) {   //Pero si es 1, ya se puede llenar ese espacio
-                        //   std::cout << "iterador: "<<iterador << '\n';
-                        //
-                        //   return iterador;  //Se devuelve la posicion donde se asigno
-                        // }
                         iterador=posicion_final; //Se saltará todas esas iteraciones
 
                 }
