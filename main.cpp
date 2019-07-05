@@ -36,6 +36,7 @@ int main(int argc, char *argv[])
                   ordenarPorHolguraVectorDocente(vectorDocente);
 
                   vector<vector<vector<string> > > superCubo = crearSuperCubo(vectorSala);
+                  vector<vector<vector<int> > > nivel = crearNivel();
 
 
                   //Se usa OpenMP para paralelizar la escritura en el superCubo
@@ -56,7 +57,7 @@ int main(int argc, char *argv[])
                       diferencia = (vectorDocente.size() % nthreads);
                     }
 
-                    asignarPorProcesador(superCubo, vectorDocente, vectorSala, mi_hilo, divProfesores, diferencia);
+                    asignarPorProcesador(superCubo,nivel, vectorDocente, vectorSala, mi_hilo, divProfesores, diferencia);
 
 
 

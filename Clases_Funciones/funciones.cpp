@@ -148,9 +148,7 @@ void escribirResultadosEnXlsxFinal(vector<vector<Sala> > vectorSala, vector<vect
 								border=estilo_borde(border);
 								salida.load("salida.xlsx"); //Se carga el archivo de salida de resultados
 								int tamSala= vectorSala.at(0).size(); //Tamaño del subvector Salas normales
-								int contINF=0; //Variable de prueba
-								int contNORMAL=0; //Variable de prueba
-								int cuentaTotal=0; //Variable de prueba
+
 								for(int sala = 0; sala < superCubo.size(); sala++) {
 																int subvector=posicionSubvectorSala(tamSala,sala);
 																int posicionReal= posicionSala(tamSala,sala,subvector);
@@ -160,15 +158,6 @@ void escribirResultadosEnXlsxFinal(vector<vector<Sala> > vectorSala, vector<vect
 																																xlnt::worksheet hojaActiva = salida.sheet_by_title(vectorSala.at(subvector).at(posicionReal).getNombre());
 																																//Se escribe el horario dependiendo de lo que haya el vector de resultados
 																																hojaActiva.cell(xlnt::cell_reference(dia + 3, periodo + 2)).value(superCubo.at(sala).at(dia).at(periodo));
-																																if (superCubo.at(sala).at(dia).at(periodo)[0]!='*') {
-																																								cuentaTotal++;
-																																								if (superCubo.at(sala).at(dia).at(periodo)[0]=='I' && superCubo.at(sala).at(dia).at(periodo)[1]=='N' && superCubo.at(sala).at(dia).at(periodo)[2]=='F') {
-																																																contINF++;
-																																								}
-																																								else{
-																																																contNORMAL++;
-																																								}
-																																}
 
 
 																																borde_alineamiento_tam(hojaActiva,border,dia,periodo);
@@ -176,9 +165,6 @@ void escribirResultadosEnXlsxFinal(vector<vector<Sala> > vectorSala, vector<vect
 																}
 								}
 								salida.save("salida.xlsx"); //Se guardan resultados
-								std::cout << "Cuenta total: "<<cuentaTotal << '\n';
-								std::cout << "Cuenta de INF: " << contINF<< '\n';
-								std::cout << "Cuenta de NO INF: " << contNORMAL<< '\n';
 }
 
 //Funcion que inicializa un SuperCubo, el cual se recorre por sala,dia,periodo y representa el Excel de salida
@@ -201,6 +187,26 @@ vector<vector<vector<string> > > crearSuperCubo(vector<vector<Sala> > vectorSala
 																superCubo.push_back(horarioDia);
 								}
 								return superCubo;
+}
+
+//Funcion que inicializa un vector de 3 dimensiones
+vector<vector<vector<int> > > crearNivel(){
+								vector<vector<vector<int> > > nivel;
+								for(int dia = 0; dia < 6; dia++) {
+									vector<vector<int> > nivelesxperiodo;
+																int maxPeriodos = 7;
+																if(dia == 5) maxPeriodos = 4;
+																for(int periodo = 0; periodo < maxPeriodos; periodo++) {
+																	vector<int> max_nivel;
+																								for(int semestre = 0; semestre < 12; semestre++) {
+																									max_nivel.push_back(1);
+																								}
+																	nivelesxperiodo.push_back(max_nivel);
+																}
+									nivel.push_back(nivelesxperiodo);
+								}
+								// std::cout << "dfsdf"<< nivel.at(0).at(0).at(0) << '\n';
+								return nivel;
 }
 
 //Compueba si un ramo es de informatica
@@ -253,13 +259,48 @@ bool disponibilidadSuperCubo(int salaAleatoria, int dia, int periodo, vector<vec
 								return true; //En caso contrario, los bloques estan disponibles
 }
 
+int disponibilidadxNivel(string codigo_curso, int dia, int periodo, int bloques, vector<vector<vector<int> > > nivel){
+	string codigo=codigo_curso.substr(0, 4);
+	string resultado =codigo_curso.substr(5,2);
+	int semestre=obtenerNivelasignatura(codigo,resultado)-1;
+	if (semestre==-1) return -1;
+
+	for (int i= periodo; i<periodo+bloques; i++) { //Se itera desde la posicion dada hasta cumplir con la cantidad de bloques solicitados
+									if (semestre>-1) {		//Si es un ramo que entra en la categoria
+										if(nivel.at(dia).at(periodo).at(semestre)== 0) { //Si en el día y periodo ya se encuentra una asingatura de este nivel
+																		return -2; //Retorna inmediatamente que se encuentra sin disponibilidad
+										}
+									}
+
+	}
+	return semestre; //En caso contrario, los bloques estan disponibles
+}
+
+int obtenerNivelasignatura(string letras, string numeros){		//INESTABLE
+	if (letras=="INFB") return stoi(numeros);
+	// if (letras=="QUIC") return stoi(numeros);
+	// if (letras=="MATC") return stoi(numeros);
+	if (letras=="MATB") return stoi(numeros);
+	// if (letras=="MATD") return stoi(numeros);
+	// if (letras=="FISC") return stoi(numeros);
+	if (letras=="FISB") return stoi(numeros);
+	if (letras=="ESTB") return stoi(numeros);
+	// if (letras=="ESTC") return stoi(numeros);
+	// if (letras=="MECB") return stoi(numeros);
+	// if (letras=="MECD") return stoi(numeros);
+
+	return 0;		//Si es un ramo no especificado, debe asignarse si o si
+
+}
+
+
 int obtenerNumMayor(int mayor, int numero, int posicion){   //Función que retorna el mayor entre 2 numeros
 								if (mayor>=10) mayor=mayor/10; //Como el numero que se recibira puede ya haber pasado por esta funcion, se verifica que el numero que llegue sea menor a 10, si es mayor significa que el segundo digito es la posicion
 								if (numero>mayor) mayor=numero; //Compara las variables mayor y numero, y si numero es mayor, este se vuelve la nueva variable mayor
 								return (mayor*10)+posicion;
 }
 
-void asignarAsignatura(vector<vector<vector<string> > > &superCubo, int salas, int tamSalasNormales, Docente &profesor, int curso, int bucleTerminado){
+void asignarAsignatura(vector<vector<vector<string> > > &superCubo,vector<vector<vector<int>>> &nivel, int salas, int tamSalasNormales, Docente &profesor, int curso, int bucleTerminado){
 								int bloquesxAsignar= decisionBloquesJuntos(profesor.getAsignaturas().at(curso).getBloques()); //Se toma la decision de cuantos bloques dejar juntos
 
 								int periodo_disponible,fin, bloques;
@@ -336,19 +377,7 @@ void asignarAsignatura(vector<vector<vector<string> > > &superCubo, int salas, i
 
 
 
-																																								// if (total_disponible-largo>=1) { //si hay bloques por separado en el vector disponibilidad
-																																								// 								// std::cout << "AHORA SOLO ASIGNO DE 1, TENGO 1 BLOQUE SUELTO EN EL VECTOR" << '\n';
-																																								// 								periodo_disponible= profesor.asignarBloqueAislado(dia,posicion_final,largo,curso); //Se buscara un bloque aislado donde asignar
-																																								// 								fin=periodo_disponible;
-																																								// 								bloques=1;
-																																								// 								asignar=true;
-																																								// }else{ //Aun se puede asignar en el conjunto
-																																								// 								std::cout << "AHORA SOLO ASIGNO DE 1, TENGO 1 BLOQUE EN EL VECTOR" << '\n';
-																																								// 								periodo_disponible= posicion_final-largo+1;
-																																								// 								fin=periodo_disponible;
-																																								// 								bloques=1;
-																																								// 								asignar=true;
-																																								// }
+
 																																}else{ //Si ya se intento poner lo que más se puede y aun asi no se puede asignar horario
 
 																																								if (total_disponible-largo>=1) { //si hay bloques por separado en el vector disponibilidad
@@ -364,33 +393,7 @@ void asignarAsignatura(vector<vector<vector<string> > > &superCubo, int salas, i
 																																																bloques=1;
 																																																asignar=true;
 																																								}
-																																								// if (bloquesxAsignar==1) { //Si hay un solo bloque
-																																								// 								if (largo==0) { //si hay bloques por separado en el vector disponibilidad
-																																								// 																// std::cout << "TENGO 1 BLOQUE SUELTO EN EL VECTOR" << '\n';
-																																								// 																periodo_disponible= profesor.asignarBloqueAislado(dia,posicion_final,largo,curso); //Se buscara un bloque aislado donde asignar
-																																								// 																fin=periodo_disponible;
-																																								// 																bloques=1;
-																																								// 																asignar=true;
-																																								// 								}else{ //Aun se puede asignar en el conjunto
-																																								// 																// std::cout << "fgfd" << '\n';
-																																								// 																periodo_disponible= posicion_final-largo+1;
-																																								// 																fin=periodo_disponible;
-																																								// 																bloques=1;
-																																								// 																asignar=true;
-																																								// 								}
-																																								//
-																																								// }else{ //Si hay más de un bloque
-																																								// 								if (bloquesxAsignar<largo) { //y si los bloques que se necesitan son menores al largo del conjunto
-																																								// 																// std::cout << "LO QUE MAS SE PUEDE" << '\n';
-																																								// 																periodo_disponible=(posicion_final-largo)+1;
-																																								// 																fin=posicion_final; //Se asigna todo lo que se tiene
-																																								// 																bloques=bloquesxAsignar;
-																																								// 																asignar=true;
-																																								//
-																																								// 								}
-																																								//
-																																								// 								// }
-																																								// }
+
 
 																																}
 
@@ -398,12 +401,15 @@ void asignarAsignatura(vector<vector<vector<string> > > &superCubo, int salas, i
 																								// std::cout << "ASIGNAR "<<asignar << '\n';
 																								if (asignar==true) {
 																																// std::cout << "ENTRANDO A disponibilidadSuperCubo" <<periodo_disponible <<'\n';
-																																if (disponibilidadSuperCubo(salas,dia,periodo_disponible, superCubo, bloques)==true) { //Si la sala,dia y periodo estan disponibles
-																																								// std::cout << "HOLA, asigne  "<< bloques <<" Con"<< profesor.getAsignaturas().at(curso).getCodigo()<< "con el profe "<< profesor.getID()<<'\n';
-
+																																string codigo_curso=profesor.getAsignaturas().at(curso).getCodigo();
+																																int semestre=disponibilidadxNivel(codigo_curso,dia,periodo_disponible,bloques,nivel);
+																																if (disponibilidadSuperCubo(salas,dia,periodo_disponible, superCubo, bloques) && semestre!=-2) { //Si la sala,dia y periodo estan disponibles
 																																								for (int iterador=periodo_disponible; iterador<periodo_disponible+bloques; iterador++) { //Se iterará desde el comienzo del conjunto hasta cubrir los bloques solicitados
 																																																profesor.reservarHorario(dia, iterador, curso); //Se reserva el horario
-																																																superCubo.at(salas).at(dia).at(iterador) = profesor.getAsignaturas().at(curso).getCodigo() + " - " + profesor.getID(); //Se anota en el Cubo
+																																																if (semestre>-1) {
+																																																	nivel.at(dia).at(iterador).at(semestre)=0;
+																																																}	//Se cambia la disponibilidad del dia y hora para ramos de ese semestre
+																																																superCubo.at(salas).at(dia).at(iterador) = codigo_curso + " - " + profesor.getID(); //Se anota en el Cubo
 																																																bloquesxAsignar--;
 																																								}
 																																}else{
@@ -415,7 +421,7 @@ void asignarAsignatura(vector<vector<vector<string> > > &superCubo, int salas, i
 								}
 }
 
-void asignarPorProcesador(vector<vector<vector<string>>> &superCubo, vector<Docente> vectorDocente, vector<vector<Sala> > vectorSala, int mi_rango, int divProfesores, int diferencia){
+void asignarPorProcesador(vector<vector<vector<string>>> &superCubo,vector<vector<vector<int> > > &nivel, vector<Docente> vectorDocente, vector<vector<Sala> > vectorSala, int mi_rango, int divProfesores, int diferencia){
 								int cont=0;
 								for(int docente = mi_rango * divProfesores; docente <= (divProfesores * mi_rango) + (divProfesores - 1) + diferencia; docente++) { //Se recorren todos los profesores
 																Docente profesor = vectorDocente.at(docente);
@@ -431,23 +437,20 @@ void asignarPorProcesador(vector<vector<vector<string>>> &superCubo, vector<Doce
 																																if(ramoInformatica) { //Si el ramo es de informatica
 																																								int salaAleatoria = rand()%vectorSala.at(1).size(); //Se toma un lab al azar
 																																								// std::cout << "Entre a un ramo de informatica en la sala "<<vectorSala.at(1).at(salaAleatoria).getNombre() << '\n';
-																																								asignarAsignatura(superCubo,salaAleatoria,vectorSala.at(0).size(),profesor,curso,bucleTerminado);
+																																								asignarAsignatura(superCubo,nivel,salaAleatoria,vectorSala.at(0).size(),profesor,curso,bucleTerminado);
 																																								bucleTerminado++;
 
 																																}
 																																else{ //Si el ramo no es de informatica
 																																								int salaAleatoria = rand()%vectorSala.at(0).size(); //Se toma una sala al azar
 																																								// std::cout << "Entre a un ramo de Plan Comun en la sala "<<vectorSala.at(0).at(salaAleatoria).getNombre() << '\n';
-																																								asignarAsignatura(superCubo,salaAleatoria,vectorSala.at(0).size(),profesor,curso,bucleTerminado);
+																																								asignarAsignatura(superCubo,nivel,salaAleatoria,vectorSala.at(0).size(),profesor,curso,bucleTerminado);
 																																								bucleTerminado++;
 																																}
 
 																								}
 																}
 								}
-								// std::cout << "Diferencia"<<diferencia << '\n';
-								std::cout << "MI RANGO" <<mi_rango<<" INICIO: " << mi_rango * divProfesores <<" Fin "<< (divProfesores * mi_rango) + (divProfesores - 1) + diferencia<<" ASIGNE: "<<cont<< '\n';
-								std::cout << "" << '\n';
 
 }
 
@@ -504,20 +507,7 @@ bool argumentos(int argc, char *argv[]){
 			return false;
 		}
 }
-// /**Función para crear sub vector*/
-//
-// string* crear_sub_vec(int inicio, int fin, int* origen){
-//     int* sub_vec;
-//     int tam;
-//     int aux = 0;
-//     tam = fin - inicio;
-//     sub_vec = (int*)malloc(tam * sizeof(int));
-//     for (int i = inicio; i < fin; ++i) {
-//         *(sub_vec+aux) = *(origen+i);
-//         aux += 1;
-//     }
-//     return  sub_vec;
-// }
+
 
 //================================== FUNCIONES DOCENTES =====================================
 

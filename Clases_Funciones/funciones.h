@@ -38,6 +38,8 @@ void escribirResultadosEnXlsxFinal(vector<vector<Sala>>, vector<vector<vector<st
 //Funcion que genera un SuperCubo, el cual se recorre por sala,dia,periodo y representa el Excel de salida
 vector<vector<vector<string> > > crearSuperCubo(vector<vector<Sala>> );
 
+vector<vector<vector<int> > > crearNivel();
+
 //Compueba si un ramo es de informatica
 bool esRamoInformatica(string);
 
@@ -48,14 +50,21 @@ char**** convertirStringaChar(vector<vector<vector<string>>>, int &, int,int);
 
 bool argumentos(int , char *argv[]);
 
+bool disponibilidadSuperCubo(int , int , int , vector<vector<vector<string> > > , int );
+
+int disponibilidadxNivel(string , int , int , int , vector<vector<vector<int> > >);
+
+
+int obtenerNivelasignatura(string, string);
+
 
 
 //Función que retorna el mayor entre 2 numeros y la ultima posicion que tiene en un arreglo (en el formato primer digito = tamaño conjunto segundo digito posicion)
 int obtenerNumMayor(int, int, int);
 
-void asignarAsignatura(vector<vector<vector<string> > > &, int,int , Docente &, int, int);
+void asignarAsignatura(vector<vector<vector<string> > > &, vector<vector<vector<int> > > &, int,int , Docente &, int, int);
 
-void asignarPorProcesador(vector<vector<vector<string> > > &, vector<Docente>, vector<vector<Sala>>, int, int, int);
+void asignarPorProcesador(vector<vector<vector<string> > > &, vector<vector<vector<int> > > &, vector<Docente>, vector<vector<Sala>>, int, int, int);
 //================================== FUNCIONES DOCENTES =====================================
 
 //Muestra por pantalla una lista de los profesores desde un vector
