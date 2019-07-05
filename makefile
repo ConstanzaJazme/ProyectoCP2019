@@ -9,7 +9,7 @@ CXXFLAGSMPI = --oversubscribe
 
 FUENTE = main.cpp
 NOMBRE = tarea.out
-XLSX = -c ArchivosXLSX/Cursos.xlsx -d ArchivosXLSX/Docentes.xlsx -s ArchivosXLSX/Salas.xlsx
+XLSX = -s ArchivosXLSX/Salas.xlsx -c ArchivosXLSX/Cursos.xlsx -d ArchivosXLSX/Docentes.xlsx
 
 LIB = -Ixlnt/include -lxlnt
 

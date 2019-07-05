@@ -66,7 +66,10 @@ void asignarAsignatura(vector<vector<vector<string> > > &, int,int , Docente &, 
 void asignarPorProcesador(vector<vector<vector<string> > > &, vector<Docente>, vector<vector<Sala>>, int, int, int);
 
 //Verificacion de la cantidad de argumentos pasados por parametro al ejecutar
-bool argumentos(int , char *argv[]);
+vector<string> argumentos(int , char *argv[]);
+
+//Comprobacion de validez de los nombres de los archivos
+bool comprobacionNombres(vector<string>);
 
 //================================== FUNCIONES DOCENTES =====================================
 

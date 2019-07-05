@@ -80,7 +80,7 @@ void quickSort(vector<Docente> &numeros, int limite_izq, int limite_der){
 }
 
 //Función para los estilos en el Excel
-xlnt::border estilo_borde(xlnt::border border){    
+xlnt::border estilo_borde(xlnt::border border){
         xlnt::border::border_property border_property;
         border_property.style(xlnt::border_style::thin);
         border.side(xlnt::border_side::start, border_property); // left
@@ -250,7 +250,7 @@ bool disponibilidadSuperCubo(int salaAleatoria, int dia, int periodo, vector<vec
 }
 
 //Función que retorna el mayor entre 2 numeros
-int obtenerNumMayor(int mayor, int numero, int posicion){   
+int obtenerNumMayor(int mayor, int numero, int posicion){
         if (mayor>=10) mayor=mayor/10; //Como el numero que se recibira puede ya haber pasado por esta funcion, se verifica que el numero que llegue sea menor a 10, si es mayor significa que el segundo digito es la posicion
         if (numero>mayor) mayor=numero; //Compara las variables mayor y numero, y si numero es mayor, este se vuelve la nueva variable mayor
         return (mayor*10)+posicion;
@@ -383,32 +383,37 @@ void asignarPorProcesador(vector<vector<vector<string>>> &superCubo, vector<Doce
         }
 }
 
-//Verificacion de la cantidad de argumentos pasados por parametro al ejecutar
-bool argumentos(int argc, char *argv[]){
-	bool cursos=false, docentes=false, salas=false;
-	if(argc-1 == 6) {
+//Verificacion de la cantidad de argumentos pasados por parametro al ejecutar y crea un vector con las
+//posiciones exactas de cada archivo.
+vector<string> argumentos(int argc, char *argv[]){
+       vector<string> nombreArchivos{"c", "d", "s"};
+       if(argc-1 == 6) {
 
-    /* Se verifica que el prefijo cumpla con el archivo correspondido */
-    for (int i = 1; i < argc; i=i+2) {
-			char *prefijo = argv[i];
+             /* Se verifica que el prefijo cumpla con el archivo correspondido */
+             for (int i = 1; i < argc; i += 2) {
+              			char *prefijo = argv[i];
 
-			if(prefijo[1] == 'c') cursos=true;
+              			if(prefijo[1] == 'c') nombreArchivos.at(0) = argv[i+1];
 
-			if(prefijo[1] == 'd') docentes=true;
+              			if(prefijo[1] == 'd') nombreArchivos.at(1) = argv[i+1];
 
-			if(prefijo[1] == 's') salas=true;
+              			if(prefijo[1] == 's') nombreArchivos.at(2) = argv[i+1];
 
-    }
-    cout << "Cantidad de Argumentos Validos." << endl;
-    if (!cursos*docentes*salas) {
-			std::cout << "Hay problemas en el orden en que se llaman los argumentos" << '\n';
-    }
-    return cursos*docentes*salas;
+              }
+              return nombreArchivos;
 
-	}else{
-			cout << "Cantidad de Argumentos Invalida." << endl;
-			return false;
-    }
+    	}
+      return nombreArchivos;
+}
+
+//Comprobacion de validez de los nombres de los archivos
+bool comprobacionNombres(vector<string> nombreArchivos){
+        for(int i = 0; i < nombreArchivos.size(); i++){
+                if(nombreArchivos.at(i).substr(nombreArchivos.at(i).length()-5, nombreArchivos.at(i).length()) != ".xlsx"){
+                        return false;
+                }
+        }
+        return true;
 }
 
 //================================== FUNCIONES DOCENTES =====================================
